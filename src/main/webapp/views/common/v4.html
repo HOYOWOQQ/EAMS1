@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三層架構補教系統完整界面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+            background: #f5f7fa;
+            line-height: 1.6;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 左側導航 */
+        .sidebar {
+            width: 280px;
+            background: #2c3e50;
+            color: white;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: #34495e;
+            text-align: center;
+            border-bottom: 1px solid #455a64;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.collapsed .logo {
+            opacity: 0;
+        }
+
+        .toggle-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* 系統切換器 */
+        .system-switcher {
+            padding: 15px;
+            border-bottom: 1px solid #455a64;
+        }
+
+        .system-select {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            background: #34495e;
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .system-select:hover {
+            background: #4a5f7a;
+        }
+
+        .sidebar.collapsed .system-switcher {
+            display: none;
+        }
+
+        /* 角色切換 */
+        .role-switcher {
+            padding: 15px;
+            border-bottom: 1px solid #455a64;
+        }
+
+        .role-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .role-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            background: #455a64;
+            color: white;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .role-btn.active {
+            background: #3498db;
+        }
+
+        .role-btn:hover {
+            background: #5a6c7d;
+        }
+
+        .role-btn.active:hover {
+            background: #2980b9;
+        }
+
+        .sidebar.collapsed .role-switcher {
+            display: none;
+        }
+
+        /* 導航選單 */
+        .nav-menu {
+            padding: 0;
+        }
+
+        .nav-item {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            background: #34495e;
+            color: white;
+        }
+
+        .nav-link.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .nav-icon {
+            margin-right: 15px;
+            font-size: 1.2rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar.collapsed .nav-icon {
+            margin-right: 0;
+        }
+
+        .nav-text {
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar.collapsed .nav-text {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        .nav-arrow {
+            margin-left: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-item.expanded .nav-arrow {
+            transform: rotate(90deg);
+        }
+
+        .sidebar.collapsed .nav-arrow {
+            display: none;
+        }
+
+        /* 子選單 */
+        .sub-menu {
+            background: #233140;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .sub-menu.expanded {
+            max-height: 500px;
+        }
+
+        .sidebar.collapsed .sub-menu {
+            display: none;
+        }
+
+        .sub-link {
+            display: block;
+            padding: 12px 20px 12px 60px;
+            color: #95a5a6;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .sub-link:hover {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .sub-link.active {
+            background: #2980b9;
+            color: white;
+        }
+
+        /* 主內容區 */
+        .main-content {
+            flex: 1;
+            background: #f8f9fa;
+            overflow-y: auto;
+        }
+
+        .content-header {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .welcome-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .content-body {
+            padding: 30px;
+        }
+
+        /* 統計卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-left: 4px solid #007bff;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-change {
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-change.positive {
+            color: #28a745;
+        }
+
+        .stat-change.negative {
+            color: #dc3545;
+        }
+
+        /* 不同顏色的統計卡片 */
+        .stat-card.blue { border-left-color: #007bff; }
+        .stat-card.blue .stat-number { color: #007bff; }
+
+        .stat-card.green { border-left-color: #28a745; }
+        .stat-card.green .stat-number { color: #28a745; }
+
+        .stat-card.yellow { border-left-color: #ffc107; }
+        .stat-card.yellow .stat-number { color: #ffc107; }
+
+        .stat-card.red { border-left-color: #dc3545; }
+        .stat-card.red .stat-number { color: #dc3545; }
+
+        .stat-card.purple { border-left-color: #6f42c1; }
+        .stat-card.purple .stat-number { color: #6f42c1; }
+
+        .stat-card.teal { border-left-color: #20c997; }
+        .stat-card.teal .stat-number { color: #20c997; }
+
+        /* 內容卡片 */
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 25px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* 課程安排卡片 */
+        .schedule-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #007bff;
+            transition: all 0.3s ease;
+        }
+
+        .schedule-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .schedule-title {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .schedule-time {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .schedule-info {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .schedule-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .status-ongoing {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-upcoming {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-preparing {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* 快速操作按鈕 */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .quick-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quick-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .quick-btn.blue { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); }
+        .quick-btn.green { background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%); }
+        .quick-btn.yellow { background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%); }
+        .quick-btn.red { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); }
+        .quick-btn.purple { background: linear-gradient(135deg, #6f42c1 0%, #59359a 100%); }
+        .quick-btn.teal { background: linear-gradient(135deg, #20c997 0%, #1aa179 100%); }
+
+        .quick-btn-icon {
+            font-size: 2rem;
+        }
+
+        .quick-btn-text {
+            font-weight: bold;
+        }
+
+        /* 圖表容器 */
+        .chart-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .chart-placeholder {
+            height: 200px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        /* 通知列表 */
+        .notification-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #007bff;
+        }
+
+        .notification-item.warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+
+        .notification-item.danger {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+
+        .notification-item.info {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .notification-title {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .notification-time {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .notification-content {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .app-container {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .chart-container {
+                grid-template-columns: 1fr;
+            }
+
+            .content-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+        }
+
+        /* 按鈕樣式 */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* 表格樣式 */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            color: #333;
+            font-weight: bold;
+            padding: 15px;
+            text-align: left;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* 徽章樣式 */
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        /* 學生專用樣式 */
+        .student-schedule {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .student-grade-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #28a745;
+            transition: all 0.3s ease;
+        }
+
+        .student-grade-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .grade-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .subject-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .grade-score {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .grade-rank {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* 動畫效果 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 左側導航 -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🎓 智慧校務系統</div>
+                <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+            </div>
+
+            <!-- 系統切換器 -->
+            <div class="system-switcher">
+                <select class="system-select" onchange="switchSystem(this.value)">
+                    <option value="marketing">🌐 對外官網</option>
+                    <option value="business" selected>🎯 前台管理</option>
+                    <option value="admin">⚙️ 後台管理</option>
+                </select>
+            </div>
+
+            <!-- 角色切換 -->
+            <div class="role-switcher">
+                <div class="role-buttons">
+                    <button class="role-btn active" onclick="switchRole('teacher')">👨‍🏫 老師</button>
+                    <button class="role-btn" onclick="switchRole('student')">🎓 學生</button>
+                </div>
+            </div>
+
+            <!-- 導航選單 -->
+            <div class="nav-menu" id="navMenu">
+                <!-- 動態載入選單 -->
+            </div>
+        </div>
+
+        <!-- 主內容區 -->
+        <div class="main-content">
+            <div class="content-header">
+                <div class="page-title" id="pageTitle">系統儀表板</div>
+                <div class="header-actions">
+                    <div class="welcome-info">
+                        <span id="welcomeUser">👋 歡迎回來，王老師</span>
+                        <span>📅 2024年1月15日 週一</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-body" id="contentBody">
+                <!-- 動態載入內容 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 系統配置
+        const systemConfig = {
+            marketing: {
+                title: '🌐 對外官網',
+                menus: [
+                    {
+                        id: 'home',
+                        icon: '🏠',
+                        text: '首頁管理',
+                        children: [
+                            { id: 'banner', text: '輪播圖管理' },
+                            { id: 'intro', text: '機構介紹' },
+                            { id: 'features', text: '特色展示' }
+                        ]
+                    },
+                    {
+                        id: 'courses',
+                        icon: '📚',
+                        text: '課程展示',
+                        children: [
+                            { id: 'course-list', text: '課程列表' },
+                            { id: 'course-detail', text: '課程詳情' },
+                            { id: 'pricing', text: '收費方案' }
+                        ]
+                    },
+                    {
+                        id: 'teachers',
+                        icon: '👨‍🏫',
+                        text: '師資介紹',
+                        children: [
+                            { id: 'teacher-list', text: '師資陣容' },
+                            { id: 'teacher-profile', text: '教師簡介' }
+                        ]
+                    },
+                    {
+                        id: 'achievements',
+                        icon: '🏆',
+                        text: '成果展示',
+                        children: [
+                            { id: 'rankings', text: '升學榜單' },
+                            { id: 'testimonials', text: '學生心得' },
+                            { id: 'awards', text: '競賽得獎' }
+                        ]
+                    },
+                    {
+                        id: 'enrollment',
+                        icon: '📝',
+                        text: '報名系統',
+                        children: [
+                            { id: 'online-form', text: '線上報名' },
+                            { id: 'trial-booking', text: '試聽預約' },
+                            { id: 'consultation', text: '諮詢服務' }
+                        ]
+                    },
+                    {
+                        id: 'news',
+                        icon: '📢',
+                        text: '最新消息',
+                        children: [
+                            { id: 'announcements', text: '最新公告' },
+                            { id: 'events', text: '活動資訊' },
+                            { id: 'blog', text: '教育文章' }
+                        ]
+                    }
+                ]
+            },
+            business: {
+                title: '🎯 前台管理',
+                menus: [
+                    {
+                        id: 'dashboard',
+                        icon: '🏠',
+                        text: '系統儀表板'
+                    },
+                    {
+                        id: 'students',
+                        icon: '🎓',
+                        text: '學生管理',
+                        children: [
+                            { id: 'student-list', text: '學生列表' },
+                            { id: 'student-add', text: '新增學生' },
+                            { id: 'student-import', text: '批量匯入' },
+                            { id: 'student-analysis', text: '學生分析' }
+                        ]
+                    },
+                    {
+                        id: 'grades',
+                        icon: '📊',
+                        text: '成績管理',
+                        children: [
+                            { id: 'grade-input', text: '成績輸入' },
+                            { id: 'grade-analysis', text: '成績分析' },
+                            { id: 'exam-management', text: '考試管理' },
+                            { id: 'report-cards', text: '成績單' }
+                        ]
+                    },
+                    {
+                        id: 'attendance',
+                        icon: '📅',
+                        text: '出缺勤管理',
+                        children: [
+                            { id: 'daily-attendance', text: '今日點名' },
+                            { id: 'attendance-history', text: '出席記錄' },
+                            { id: 'leave-management', text: '請假管理' },
+                            { id: 'makeup-classes', text: '補課安排' }
+                        ]
+                    },
+                    {
+                        id: 'finance',
+                        icon: '💰',
+                        text: '費用管理',
+                        children: [
+                            { id: 'payment-records', text: '繳費記錄' },
+                            { id: 'refund-management', text: '退費管理' },
+                            { id: 'scholarships', text: '獎學金' },
+                            { id: 'financial-reports', text: '財務報表' }
+                        ]
+                    },
+                    {
+                        id: 'courses',
+                        icon: '📚',
+                        text: '課程管理',
+                        children: [
+                            { id: 'course-setup', text: '課程設定' },
+                            { id: 'scheduling', text: '排課系統' },
+                            { id: 'course-materials', text: '教材管理' },
+                            { id: 'progress-tracking', text: '進度追蹤' }
+                        ]
+                    },
+                    {
+                        id: 'recruitment',
+                        icon: '🎯',
+                        text: '招生管理',
+                        children: [
+                            { id: 'trial-classes', text: '試聽管理' },
+                            { id: 'customer-tracking', text: '客戶追蹤' },
+                            { id: 'conversion-analysis', text: '轉換分析' },
+                            { id: 'referral-program', text: '推薦計畫' }
+                        ]
+                    },
+                    {
+                        id: 'teachers',
+                        icon: '👨‍🏫',
+                        text: '教師管理',
+                        children: [
+                            { id: 'teacher-profiles', text: '教師檔案' },
+                            { id: 'teacher-scheduling', text: '教師排班' },
+                            { id: 'performance-evaluation', text: '績效評估' },
+                            { id: 'salary-calculation', text: '薪資計算' }
+                        ]
+                    },
+                    {
+                        id: 'communications',
+                        icon: '📢',
+                        text: '通知公告',
+                        children: [
+                            { id: 'announcements', text: '公告管理' },
+                            { id: 'notifications', text: '通知發送' },
+                            { id: 'message-center', text: '訊息中心' },
+                            { id: 'parent-communication', text: '家長聯絡' }
+                        ]
+                    }
+                ]
+            },
+            admin: {
+                title: '⚙️ 後台管理',
+                menus: [
+                    {
+                        id: 'dashboard',
+                        icon: '🏠',
+                        text: '管理儀表板'
+                    },
+                    {
+                        id: 'system',
+                        icon: '⚙️',
+                        text: '系統設定',
+                        children: [
+                            { id: 'general-settings', text: '基本設定' },
+                            { id: 'parameter-config', text: '參數配置' },
+                            { id: 'feature-toggles', text: '功能開關' },
+                            { id: 'email-settings', text: '郵件設定' }
+                        ]
+                    },
+                    {
+                        id: 'users',
+                        icon: '👥',
+                        text: '用戶管理',
+                        children: [
+                            { id: 'user-accounts', text: '用戶帳號' },
+                            { id: 'role-permissions', text: '角色權限' },
+                            { id: 'access-control', text: '存取控制' },
+                            { id: 'security-settings', text: '安全設定' }
+                        ]
+                    },
+                    {
+                        id: 'data',
+                        icon: '💾',
+                        text: '資料管理',
+                        children: [
+                            { id: 'data-backup', text: '資料備份' },
+                            { id: 'data-restore', text: '資料還原' },
+                            { id: 'data-migration', text: '資料遷移' },
+                            { id: 'data-cleanup', text: '資料清理' }
+                        ]
+                    },
+                    {
+                        id: 'monitoring',
+                        icon: '📊',
+                        text: '系統監控',
+                        children: [
+                            { id: 'performance-monitor', text: '效能監控' },
+                            { id: 'error-tracking', text: '錯誤追蹤' },
+                            { id: 'usage-analytics', text: '使用分析' },
+                            { id: 'health-check', text: '健康檢查' }
+                        ]
+                    },
+                    {
+                        id: 'logs',
+                        icon: '📋',
+                        text: '日誌管理',
+                        children: [
+                            { id: 'system-logs', text: '系統日誌' },
+                            { id: 'user-activity', text: '用戶活動' },
+                            { id: 'audit-trail', text: '稽核軌跡' },
+                            { id: 'security-logs', text: '安全日誌' }
+                        ]
+                    },
+                    {
+                        id: 'reports',
+                        icon: '📈',
+                        text: '數據分析',
+                        children: [
+                            { id: 'business-intelligence', text: '商業智能' },
+                            { id: 'custom-reports', text: '自訂報表' },
+                            { id: 'data-export', text: '資料匯出' },
+                            { id: 'trend-analysis', text: '趨勢分析' }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // 當前狀態
+        let currentSystem = 'business';
+        let currentRole = 'teacher';
+        let currentPage = 'dashboard';
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNavigation();
+            loadContent();
+        });
+
+        // 切換側邊欄
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        // 切換系統
+        function switchSystem(system) {
+            currentSystem = system;
+            currentPage = 'dashboard';
+            updateNavigation();
+            loadContent();
+        }
+
+        // 切換角色
+        function switchRole(role) {
+            currentRole = role;
+            document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // 更新歡迎訊息
+            const welcomeUser = document.getElementById('welcomeUser');
+            if (role === 'teacher') {
+                welcomeUser.textContent = '👋 歡迎回來，王老師';
+            } else {
+                welcomeUser.textContent = '👋 歡迎回來，王小明同學';
+            }
+            
+            loadContent();
+        }
+
+        // 更新導航
+        function updateNavigation() {
+            const navMenu = document.getElementById('navMenu');
+            const config = systemConfig[currentSystem];
+            
+            navMenu.innerHTML = '';
+            
+            config.menus.forEach(menu => {
+                const navItem = document.createElement('div');
+                navItem.className = 'nav-item';
+                
+                const navLink = document.createElement('div');
+                navLink.className = 'nav-link';
+                navLink.onclick = () => toggleNavItem(navItem, menu.id);
+                
+                navLink.innerHTML = `
+                    <span class="nav-icon">${menu.icon}</span>
+                    <span class="nav-text">${menu.text}</span>
+                    ${menu.children ? '<span class="nav-arrow">▶</span>' : ''}
+                `;
+                
+                navItem.appendChild(navLink);
+                
+                if (menu.children) {
+                    const subMenu = document.createElement('div');
+                    subMenu.className = 'sub-menu';
+                    
+                    menu.children.forEach(child => {
+                        const subLink = document.createElement('a');
+                        subLink.className = 'sub-link';
+                        subLink.textContent = child.text;
+                        subLink.onclick = () => navigateToPage(child.id, child.text);
+                        subMenu.appendChild(subLink);
+                    });
+                    
+                    navItem.appendChild(subMenu);
+                }
+                
+                navMenu.appendChild(navItem);
+            });
+        }
+
+        // 切換導航項目
+        function toggleNavItem(navItem, menuId) {
+            if (navItem.querySelector('.sub-menu')) {
+                navItem.classList.toggle('expanded');
+                const subMenu = navItem.querySelector('.sub-menu');
+                subMenu.classList.toggle('expanded');
+            } else {
+                navigateToPage(menuId, navItem.querySelector('.nav-text').textContent);
+            }
+        }
+
+        // 導航到頁面
+        function navigateToPage(pageId, pageTitle) {
+            currentPage = pageId;
+            document.getElementById('pageTitle').textContent = pageTitle;
+            
+            // 更新導航狀態
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.querySelectorAll('.sub-link').forEach(link => link.classList.remove('active'));
+            
+            // 設置當前頁面為活動狀態
+            const activeLink = document.querySelector(`[onclick*="${pageId}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+            
+            loadContent();
+        }
+
+        // 載入內容
+        function loadContent() {
+            const contentBody = document.getElementById('contentBody');
+            
+            if (currentPage === 'dashboard') {
+                if (currentRole === 'teacher') {
+                    loadTeacherDashboard(contentBody);
+                } else {
+                    loadStudentDashboard(contentBody);
+                }
+            } else {
+                loadGenericPage(contentBody);
+            }
+        }
+
+        // 載入老師儀表板
+        function loadTeacherDashboard(container) {
+            container.innerHTML = `
+                <div class="fade-in">
+                    <!-- 統計卡片 -->
+                    <div class="stats-grid">
+                        <div class="stat-card blue">
+                            <div class="stat-number">156</div>
+                            <div class="stat-label">總學生數</div>
+                            <div class="stat-change positive">📈 +3 本月新增</div>
+                        </div>
+                        <div class="stat-card green">
+                            <div class="stat-number">95%</div>
+                            <div class="stat-label">今日出席率</div>
+                            <div class="stat-change positive">📈 比昨日高3%</div>
+                        </div>
+                        <div class="stat-card yellow">
+                            <div class="stat-number">23</div>
+                            <div class="stat-label">待處理事項</div>
+                            <div class="stat-change negative">⚠️ 需要關注</div>
+                        </div>
+                        <div class="stat-card red">
+                            <div class="stat-number">8</div>
+                            <div class="stat-label">逾期繳費</div>
+                            <div class="stat-change negative">❌ 需要催收</div>
+                        </div>
+                        <div class="stat-card purple">
+                            <div class="stat-number">15</div>
+                            <div class="stat-label">進行中課程</div>
+                            <div class="stat-change positive">🎯 課程正常</div>
+                        </div>
+                        <div class="stat-card teal">
+                            <div class="stat-number">12</div>
+                            <div class="stat-label">活躍教師</div>
+                            <div class="stat-change">👨‍🏫 全員在崗</div>
+                        </div>
+                    </div>
+
+                    <!-- 今日課程安排 -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <span>📅 今日課程安排</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="schedule-card" style="border-left-color: #007bff;">
+                                <div class="schedule-header">
+                                    <div class="schedule-title">📐 國二數學甲班</div>
+                                    <div class="schedule-time">14:00-15:30</div>
+                                </div>
+                                <div class="schedule-info">A101教室 | 25位學生</div>
+                                <div class="schedule-status status-ongoing">進行中</div>
+                            </div>
+                            <div class="schedule-card" style="border-left-color: #28a745;">
+                                <div class="schedule-header">
+                                    <div class="schedule-title">🔤 國二英文甲班</div>
+                                    <div class="schedule-time">15:40-17:10</div>
+                                </div>
+                                <div class="schedule-info">B102教室 | 20位學生</div>
+                                <div class="schedule-status status-upcoming">待開始</div>
+                            </div>
+                            <div class="schedule-card" style="border-left-color: #6c757d;">
+                                <div class="schedule-header">
+                                    <div class="schedule-title">📐 國三數學衝刺班</div>
+                                    <div class="schedule-time">18:30-20:00</div>
+                                </div>
+                                <div class="schedule-info">A101教室 | 30位學生</div>
+                                <div class="schedule-status status-preparing">準備中</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 快速操作 -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <span>⚡ 快速操作</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="quick-actions">
+                                <button class="quick-btn blue">
+                                    <div class="quick-btn-icon">✅</div>
+                                    <div class="quick-btn-text">今日點名</div>
+                                </button>
+                                <button class="quick-btn green">
+                                    <div class="quick-btn-icon">📝</div>
+                                    <div class="quick-btn-text">輸入成績</div>
+                                </button>
+                                <button class="quick-btn yellow">
+                                    <div class="quick-btn-icon">📤</div>
+                                    <div class="quick-btn-text">發送通知</div>
+                                </button>
+                                <button class="quick-btn red">
+                                    <div class="quick-btn-icon">💰</div>
+                                    <div class="quick-btn-text">收費記錄</div>
+                                </button>
+                                <button class="quick-btn purple">
+                                    <div class="quick-btn-icon">📊</div>
+                                    <div class="quick-btn-text">查看報表</div>
+                                </button>
+                                <button class="quick-btn teal">
+                                    <div class="quick-btn-icon">👥</div>
+                                    <div class="quick-btn-text">新增學生</div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 本月營運概況 -->
+                    <div class="chart-container">
+                        <div class="chart-card">
+                            <div class="chart-title">👥 學生狀況</div>
+                            <div class="chart-placeholder">
+                                📊 學生數量變化圖<br>
+                                <small>新增 vs 流失 vs 在學</small>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <div class="chart-title">💰 收入分析</div>
+                            <div class="chart-placeholder">
+                                💹 月收入趨勢圖<br>
+                                <small>學費 vs 教材費 vs 活動費</small>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <div class="chart-title">📚 課程熱度</div>
+                            <div class="chart-placeholder">
+                                🔥 課程受歡迎程度<br>
+                                <small>報名人數 vs 滿班率</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 重要通知 -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <span>🔔 重要通知</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="notification-item warning">
+                                <div class="notification-header">
+                                    <div class="notification-title">⚠️ 系統提醒</div>
+                                    <div class="notification-time">2小時前</div>
+                                </div>
+                                <div class="notification-content">第一次段考成績輸入截止：明天 17:00，還有 8 份成績待輸入</div>
+                            </div>
+                            <div class="notification-item danger">
+                                <div class="notification-header">
+                                    <div class="notification-title">🚨 出席警示</div>
+                                    <div class="notification-time">3小時前</div>
+                                </div>
+                                <div class="notification-content">林小偉連續曠課 3 次，需要關懷，建議聯絡家長</div>
+                            </div>
+                            <div class="notification-item info">
+                                <div class="notification-header">
+                                    <div class="notification-title">ℹ️ 課程通知</div>
+                                    <div class="notification-time">1天前</div>
+                                </div>
+                                <div class="notification-content">明日因颱風停課，補課時間另行通知，影響 5 堂課程</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 載入學生儀表板
+        function loadStudentDashboard(container) {
+            container.innerHTML = `
+                <div class="fade-in">
+                    <!-- 學生個人信息卡片 -->
+                    <div class="student-schedule">
+                        <h2 style="margin-bottom: 15px;">👋 你好，王小明同學</h2>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                            <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold;">國二甲班</div>
+                                <div style="opacity: 0.9;">你的班級</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold;">第3名</div>
+                                <div style="opacity: 0.9;">班級排名</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold;">96%</div>
+                                <div style="opacity: 0.9;">出席率</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold;">5科</div>
+                                <div style="opacity: 0.9;">修課數</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 今日課程安排 -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <span>📅 今日課程安排</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="schedule-card" style="border-left-color: #007bff;">
+                                <div class="schedule-header">
+                                    <div class="schedule-title">📐 數學課</div>
+                                    <div class="schedule-time">14:00-15:30</div>
+                                </div>
+                                <div class="schedule-info">A101教室 | 王老師</div>
+                                <div class="schedule-status status-ongoing">進行中</div>
+                            </div>
+                            <div class="schedule-card" style="border-left-color: #28a745;">
+                                <div class="schedule-header">
+                                    <div class="schedule-title">🔤 英文課</div>
+                                    <div class="schedule-time">15:40-17:10</div>
+                                </div>
+                                <div class="schedule-info">B102教室 | 李老師</div>
+                                <div class="schedule-status status-upcoming">待開始</div>
+                            </div>
+                            <div class="schedule-card" style="border-left-color: #6c757d;">
+                                <div class="schedule-header">
+                                    <div class="schedule-title">⚗️ 理化課</div>
+                                    <div class="schedule-time">18:30-20:00</div>
+                                </div>
+                                <div class="schedule-info">實驗室 | 張老師</div>
+                                <div class="schedule-status status-preparing">準備中</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 最新成績 -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <span>📊 最新成績</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="student-grade-card" style="border-left-color: #28a745;">
+                                <div class="grade-header">
+                                    <div class="subject-name">📐 數學</div>
+                                    <div class="grade-score">92分</div>
+                                </div>
+                                <div class="grade-rank">班級排名：第2名 | 進步 +5分 ↗️</div>
+                            </div>
+                            <div class="student-grade-card" style="border-left-color: #007bff;">
+                                <div class="grade-header">
+                                    <div class="subject-name">🔤 英文</div>
+                                    <div class="grade-score">88分</div>
+                                </div>
+                                <div class="grade-rank">班級排名：第4名 | 持平 ➡️</div>
+                            </div>
+                            <div class="student-grade-card" style="border-left-color: #ffc107;">
+                                <div class="grade-header">
+                                    <div class="subject-name">📝 國文</div>
+                                    <div class="grade-score">78分</div>
+                                </div>
+                                <div class="grade-rank">班級排名：第8名 | 退步 -3分 ↘️</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 學習統計 -->
+                    <div class="chart-container">
+                        <div class="chart-card">
+                            <div class="chart-title">📈 成績趨勢</div>
+                            <div class="chart-placeholder">
+                                📊 各科成績變化圖<br>
+                                <small>近6次考試成績趨勢</small>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <div class="chart-title">📅 出席統計</div>
+                            <div class="chart-placeholder">
+                                📊 月出席率統計<br>
+                                <small>本學期出席情況</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 最新通知 -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <span>📢 最新通知</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="notification-item warning">
+                                <div class="notification-header">
+                                    <div class="notification-title">📋 作業提醒</div>
+                                    <div class="notification-time">今天</div>
+                                </div>
+                                <div class="notification-content">數學作業第3章練習題，請於明日上課前完成</div>
+                            </div>
+                            <div class="notification-item info">
+                                <div class="notification-header">
+                                    <div class="notification-title">📅 考試通知</div>
+                                    <div class="notification-time">昨天</div>
+                                </div>
+                                <div class="notification-content">第二次段考時間：下週一至週三，請做好準備</div>
+                            </div>
+                            <div class="notification-item info">
+                                <div class="notification-header">
+                                    <div class="notification-title">🏆 成績公布</div>
+                                    <div class="notification-time">2天前</div>
+                                </div>
+                                <div class="notification-content">第一次段考成績已公布，可至成績查詢頁面查看詳細資訊</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 繳費狀況 -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <span>💰 繳費狀況</span>
+                        </div>
+                        <div class="card-body">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                                <div style="background: #e8f5e8; padding: 15px; border-radius: 8px;">
+                                    <div style="font-weight: bold; color: #2e7d32; margin-bottom: 5px;">✅ 本月學費</div>
+                                    <div style="color: #666;">已繳清 - $15,000</div>
+                                </div>
+                                <div style="background: #fff3e0; padding: 15px; border-radius: 8px;">
+                                    <div style="font-weight: bold; color: #f57c00; margin-bottom: 5px;">⏰ 下月學費</div>
+                                    <div style="color: #666;">尚未繳納 - $15,000</div>
+                                </div>
+                                <div style="background: #e3f2fd; padding: 15px; border-radius: 8px;">
+                                    <div style="font-weight: bold; color: #1976d2; margin-bottom: 5px;">📚 教材費</div>
+                                    <div style="color: #666;">已繳清 - $2,000</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 載入一般頁面
+        function loadGenericPage(container) {
+            container.innerHTML = `
+                <div class="fade-in">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <span>🔧 功能開發中</span>
+                        </div>
+                        <div class="card-body">
+                            <div style="text-align: center; padding: 50px; color: #666;">
+                                <div style="font-size: 3rem; margin-bottom: 20px;">🚧</div>
+                                <h3>此功能正在開發中</h3>
+                                <p>我們正在努力完善這個功能，敬請期待！</p>
+                                <button class="btn btn-primary" style="margin-top: 20px;" onclick="navigateToPage('dashboard', '系統儀表板')">
+                                    返回儀表板
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 鍵盤快捷鍵
+        document.addEventListener('keydown', function(e) {
+            if (e.altKey) {
+                switch(e.key) {
+                    case '1':
+                        e.preventDefault();
+                        switchSystem('marketing');
+                        break;
+                    case '2':
+                        e.preventDefault();
+                        switchSystem('business');
+                        break;
+                    case '3':
+                        e.preventDefault();
+                        switchSystem('admin');
+                        break;
+                    case 't':
+                        e.preventDefault();
+                        switchRole('teacher');
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        switchRole('student');
+                        break;
+                    case 'h':
+                        e.preventDefault();
+                        navigateToPage('dashboard', '系統儀表板');
+                        break;
+                }
+            }
+        });
+
+        // 印出快捷鍵提示
+        console.log('⌨️ 鍵盤快捷鍵:');
+        console.log('Alt + 1: 對外官網');
+        console.log('Alt + 2: 前台管理');
+        console.log('Alt + 3: 後台管理');
+        console.log('Alt + T: 切換到老師角色');
+        console.log('Alt + S: 切換到學生角色');
+        console.log('Alt + H: 返回儀表板');
+    </script>
+</body>
+</html>

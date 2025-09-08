@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>課程評價系統</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+            background: #f5f7fa;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        /* 頁面標題 */
+        .page-header {
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* 功能區塊 */
+        .mockup-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 工具列 */
+        .mock-toolbar {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .mock-btn {
+            padding: 8px 16px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .mock-btn.primary {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .mock-btn.success {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .mock-btn.warning {
+            background: #ffc107;
+            color: #212529;
+            border-color: #ffc107;
+        }
+
+        .mock-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        /* 表單樣式 */
+        .form-input, .form-select {
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        /* 統計卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #007bff;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* 評價卡片 */
+        .evaluation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .evaluation-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-left: 4px solid #007bff;
+            transition: all 0.3s ease;
+        }
+
+        .evaluation-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .course-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .course-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .course-teacher {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .overall-rating {
+            text-align: center;
+        }
+
+        .rating-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffc107;
+            margin-bottom: 5px;
+        }
+
+        .rating-stars {
+            color: #ffc107;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .rating-count {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .rating-breakdown {
+            margin: 15px 0;
+        }
+
+        .rating-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .rating-label {
+            width: 80px;
+            color: #555;
+        }
+
+        .rating-bar {
+            flex: 1;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin: 0 10px;
+            overflow: hidden;
+        }
+
+        .rating-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #ffc107, #ff8c00);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .rating-score {
+            width: 30px;
+            text-align: right;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* 評論區域 */
+        .review-section {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .review-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reviewer-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .reviewer-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .review-date {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .review-rating {
+            color: #ffc107;
+        }
+
+        .review-content {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* 評價表單 */
+        .evaluation-form {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .star {
+            font-size: 1.5rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #ffc107;
+            transform: scale(1.1);
+        }
+
+        .star.hover {
+            color: #ffeb3b;
+        }
+
+        .rating-criteria {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .criteria-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .criteria-label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .criteria-rating {
+            display: flex;
+            gap: 3px;
+        }
+
+        .criteria-star {
+            font-size: 1.2rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .criteria-star:hover,
+        .criteria-star.active {
+            color: #ffc107;
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* 圖表區域 */
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .chart-placeholder {
+            height: 250px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        /* 篩選標籤 */
+        .filter-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .filter-tag {
+            background: #e9ecef;
+            color: #495057;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-tag.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .filter-tag:hover {
+            background: #6c757d;
+            color: white;
+        }
+
+        /* 彈窗樣式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .evaluation-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .rating-criteria {
+                grid-template-columns: 1fr;
+            }
+            
+            .mock-toolbar {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 評價系統主頁 -->
+        <div id="main-page">
+            <div class="page-header">
+                <div class="page-title">⭐ 課程評價系統</div>
+                <div class="page-subtitle">查看課程評價、管理學生反饋，提升教學品質</div>
+            </div>
+
+            <div class="mockup-section">
+                <div class="section-title">🔍 篩選與操作</div>
+                <div class="mock-toolbar">
+                    <select class="form-select" style="width: 150px;" id="courseFilter">
+                        <option value="">所有課程</option>
+                        <option value="數學">數學課程</option>
+                        <option value="英文">英文課程</option>
+                        <option value="理化">理化課程</option>
+                        <option value="國文">國文課程</option>
+                    </select>
+                    <select class="form-select" style="width: 120px;" id="periodFilter">
+                        <option value="">所有時期</option>
+                        <option value="recent">最近一個月</option>
+                        <option value="semester">本學期</option>
+                        <option value="year">本年度</option>
+                    </select>
+                    <select class="form-select" style="width: 120px;" id="ratingFilter">
+                        <option value="">所有評分</option>
+                        <option value="5">⭐⭐⭐⭐⭐</option>
+                        <option value="4">⭐⭐⭐⭐</option>
+                        <option value="3">⭐⭐⭐</option>
+                        <option value="2">⭐⭐</option>
+                        <option value="1">⭐</option>
+                    </select>
+                    <button class="mock-btn primary" onclick="filterEvaluations()">🔍 篩選</button>
+                    <button class="mock-btn success" onclick="showEvaluationForm()">➕ 新增評價</button>
+                    <button class="mock-btn warning" onclick="exportReport()">📊 匯出報表</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">4.6</div>
+                    <div class="stat-label">平均評分</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">342</div>
+                    <div class="stat-label">總評價數</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">89%</div>
+                    <div class="stat-label">滿意度</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">評價課程數</div>
+                </div>
+            </div>
+
+            <div class="mockup-section">
+                <div class="section-title">📊 評價分析</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="chart-container">
+                        <div class="chart-title">評分分布圖</div>
+                        <div class="chart-placeholder">
+                            📊 5星: 45% | 4星: 32% | 3星: 15% | 2星: 6% | 1星: 2%
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">月度評價趨勢</div>
+                        <div class="chart-placeholder">
+                            📈 評價數量與平均分數變化趨勢
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mockup-section">
+                <div class="section-title">📚 課程評價概覽</div>
+                <div class="filter-tags">
+                    <button class="filter-tag active" onclick="filterByRating('all')">全部</button>
+                    <button class="filter-tag" onclick="filterByRating('excellent')">優秀 (4.5+)</button>
+                    <button class="filter-tag" onclick="filterByRating('good')">良好 (3.5-4.4)</button>
+                    <button class="filter-tag" onclick="filterByRating('average')">普通 (2.5-3.4)</button>
+                    <button class="filter-tag" onclick="filterByRating('poor')">待改善 (<2.5)</button>
+                </div>
+                
+                <div class="evaluation-grid" id="evaluationGrid">
+                    <!-- 評價卡片會動態生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 評價表單彈窗 -->
+    <div id="evaluationModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeEvaluationModal()">&times;</button>
+            <div class="evaluation-form">
+                <div class="form-title">📝 課程評價表</div>
+                
+                <form id="evaluationForm">
+                    <div class="form-group">
+                        <label class="form-label">選擇課程 *</label>
+                        <select class="form-input" id="courseSelect" required>
+                            <option value="">請選擇課程</option>
+                            <option value="國二數學進階班">國二數學進階班</option>
+                            <option value="國二英文基礎班">國二英文基礎班</option>
+                            <option value="國三理化衝刺班">國三理化衝刺班</option>
+                            <option value="國三數學總複習">國三數學總複習</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">學生姓名 *</label>
+                        <input type="text" class="form-input" id="studentName" placeholder="請輸入學生姓名" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">整體評分 *</label>
+                        <div class="star-rating" id="overallRating">
+                            <span class="star" data-rating="1">⭐</span>
+                            <span class="star" data-rating="2">⭐</span>
+                            <span class="star" data-rating="3">⭐</span>
+                            <span class="star" data-rating="4">⭐</span>
+                            <span class="star" data-rating="5">⭐</span>
+                        </div>
+                        <small style="color: #666;">點擊星星進行評分</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">詳細評分</label>
+                        <div class="rating-criteria">
+                            <div class="criteria-item">
+                                <div class="criteria-label">教學內容</div>
+                                <div class="criteria-rating" data-criteria="content">
+                                    <span class="criteria-star" data-rating="1">⭐</span>
+                                    <span class="criteria-star" data-rating="2">⭐</span>
+                                    <span class="criteria-star" data-rating="3">⭐</span>
+                                    <span class="criteria-star" data-rating="4">⭐</span>
+                                    <span class="criteria-star" data-rating="5">⭐</span>
+                                </div>
+                            </div>
+                            <div class="criteria-item">
+                                <div class="criteria-label">教學方式</div>
+                                <div class="criteria-rating" data-criteria="method">
+                                    <span class="criteria-star" data-rating="1">⭐</span>
+                                    <span class="criteria-star" data-rating="2">⭐</span>
+                                    <span class="criteria-star" data-rating="3">⭐</span>
+                                    <span class="criteria-star" data-rating="4">⭐</span>
+                                    <span class="criteria-star" data-rating="5">⭐</span>
+                                </div>
+                            </div>
+                            <div class="criteria-item">
+                                <div class="criteria-label">師生互動</div>
+                                <div class="criteria-rating" data-criteria="interaction">
+                                    <span class="criteria-star" data-rating="1">⭐</span>
+                                    <span class="criteria-star" data-rating="2">⭐</span>
+                                    <span class="criteria-star" data-rating="3">⭐</span>
+                                    <span class="criteria-star" data-rating="4">⭐</span>
+                                    <span class="criteria-star" data-rating="5">⭐</span>
+                                </div>
+                            </div>
+                            <div class="criteria-item">
+                                <div class="criteria-label">學習效果</div>
+                                <div class="criteria-rating" data-criteria="effectiveness">
+                                    <span class="criteria-star" data-rating="1">⭐</span>
+                                    <span class="criteria-star" data-rating="2">⭐</span>
+                                    <span class="criteria-star" data-rating="3">⭐</span>
+                                    <span class="criteria-star" data-rating="4">⭐</span>
+                                    <span class="criteria-star" data-rating="5">⭐</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">課程評語</label>
+                        <textarea class="form-input" id="comment" placeholder="請分享您對課程的具體感受和建議..." rows="4"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">最喜歡的部分</label>
+                        <input type="text" class="form-input" id="favoriteAspect" placeholder="例：老師講解清楚、課程內容豐富">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">建議改進的地方</label>
+                        <input type="text" class="form-input" id="improvementSuggestion" placeholder="例：希望增加練習時間、提供更多範例">
+                    </div>
+
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button type="button" class="mock-btn" onclick="closeEvaluationModal()" style="margin-right: 10px;">取消</button>
+                        <button type="submit" class="mock-btn success">✅ 提交評價</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 評價資料
+        const evaluationData = [
+            {
+                id: 1,
+                courseName: '國二數學進階班',
+                teacher: '王志明老師',
+                overallRating: 4.8,
+                ratings: {
+                    content: 4.9,
+                    method: 4.7,
+                    interaction: 4.8,
+                    effectiveness: 4.9
+                },
+                reviewCount: 45,
+                reviews: [
+                    {
+                        studentName: '王小明',
+                        rating: 5,
+                        comment: '老師教學非常清楚，數學概念解釋得很詳細，讓我對數學重新產生興趣！',
+                        date: '2024-01-15',
+                        favorite: '老師會用生活例子解釋數學',
+                        improvement: '希望能有更多練習題'
+                    },
+                    {
+                        studentName: '李小華',
+                        rating: 4,
+                        comment: '課程安排很好，進度適中，不會太快也不會太慢。',
+                        date: '2024-01-12',
+                        favorite: '小班教學，老師照顧到每個學生',
+                        improvement: '教室可以更寬敞一些'
+                    }
+                ]
+            },
+            {
+                id: 2,
+                courseName: '國二英文基礎班',
+                teacher: '李美華老師',
+                overallRating: 4.5,
+                ratings: {
+                    content: 4.6,
+                    method: 4.4,
+                    interaction: 4.5,
+                    effectiveness: 4.5
+                },
+                reviewCount: 32,
+                reviews: [
+                    {
+                        studentName: '張小美',
+                        rating: 5,
+                        comment: '李老師很有耐心，會重複講解直到我們都懂為止。',
+                        date: '2024-01-14',
+                        favorite: '老師會糾正發音',
+                        improvement: '希望增加口說練習時間'
+                    }
+                ]
+            },
+            {
+                id: 3,
+                courseName: '國三理化衝刺班',
+                teacher: '張文傑老師',
+                overallRating: 4.2,
+                ratings: {
+                    content: 4.3,
+                    method: 4.1,
+                    interaction: 4.0,
+                    effectiveness: 4.4
+                },
+                reviewCount: 28,
+                reviews: [
+                    {
+                        studentName: '陳小強',
+                        rating: 4,
+                        comment: '課程內容很豐富，但有時候進度比較快。',
+                        date: '2024-01-13',
+                        favorite: '實驗課很有趣',
+                        improvement: '希望進度可以稍微慢一點'
+                    }
+                ]
+            }
+        ];
+
+        let currentRatings = {
+            overall: 0,
+            content: 0,
+            method: 0,
+            interaction: 0,
+            effectiveness: 0
+        };
+
+        // 初始化頁面
+        document.addEventListener('DOMContentLoaded', function() {
+            renderEvaluationCards();
+            initializeStarRatings();
+        });
+
+        // 渲染評價卡片
+        function renderEvaluationCards(filteredData = null) {
+            const evaluationGrid = document.getElementById('evaluationGrid');
+            const data = filteredData || evaluationData;
+            
+            evaluationGrid.innerHTML = '';
+            
+            data.forEach(evaluation => {
+                const cardHTML = createEvaluationCard(evaluation);
+                evaluationGrid.innerHTML += cardHTML;
+            });
+        }
+
+        // 創建評價卡片
+        function createEvaluationCard(evaluation) {
+            const stars = generateStars(evaluation.overallRating);
+            const satisfactionRate = Math.round((evaluation.overallRating / 5) * 100);
+            
+            return `
+                <div class="evaluation-card">
+                    <div class="course-info-header">
+                        <div>
+                            <div class="course-name">${evaluation.courseName}</div>
+                            <div class="course-teacher">${evaluation.teacher}</div>
+                        </div>
+                        <div class="overall-rating">
+                            <div class="rating-number">${evaluation.overallRating}</div>
+                            <div class="rating-stars">${stars}</div>
+                            <div class="rating-count">${evaluation.reviewCount} 則評價</div>
+                        </div>
+                    </div>
+                    
+                    <div class="rating-breakdown">
+                        <div class="rating-item">
+                            <div class="rating-label">教學內容</div>
+                            <div class="rating-bar">
+                                <div class="rating-fill" style="width: ${(evaluation.ratings.content / 5) * 100}%"></div>
+                            </div>
+                            <div class="rating-score">${evaluation.ratings.content}</div>
+                        </div>
+                        <div class="rating-item">
+                            <div class="rating-label">教學方式</div>
+                            <div class="rating-bar">
+                                <div class="rating-fill" style="width: ${(evaluation.ratings.method / 5) * 100}%"></div>
+                            </div>
+                            <div class="rating-score">${evaluation.ratings.method}</div>
+                        </div>
+                        <div class="rating-item">
+                            <div class="rating-label">師生互動</div>
+                            <div class="rating-bar">
+                                <div class="rating-fill" style="width: ${(evaluation.ratings.interaction / 5) * 100}%"></div>
+                            </div>
+                            <div class="rating-score">${evaluation.ratings.interaction}</div>
+                        </div>
+                        <div class="rating-item">
+                            <div class="rating-label">學習效果</div>
+                            <div class="rating-bar">
+                                <div class="rating-fill" style="width: ${(evaluation.ratings.effectiveness / 5) * 100}%"></div>
+                            </div>
+                            <div class="rating-score">${evaluation.ratings.effectiveness}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                        <div style="color: #28a745; font-weight: bold;">滿意度: ${satisfactionRate}%</div>
+                        <button class="mock-btn" onclick="showCourseReviews(${evaluation.id})">📖 查看評價</button>
+                    </div>
+                    
+                    ${evaluation.reviews.length > 0 ? `
+                    <div class="review-section">
+                        <h4 style="margin-bottom: 15px; color: #333;">最新評價</h4>
+                        ${evaluation.reviews.slice(0, 2).map(review => createReviewItem(review)).join('')}
+                        ${evaluation.reviews.length > 2 ? `
+                        <div style="text-align: center; margin-top: 15px;">
+                            <button class="mock-btn" onclick="showAllReviews(${evaluation.id})">查看全部 ${evaluation.reviews.length} 則評價</button>
+                        </div>
+                        ` : ''}
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // 創建評論項目
+        function createReviewItem(review) {
+            const stars = generateStars(review.rating);
+            const avatarLetter = review.studentName.charAt(0);
+            
+            return `
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">${avatarLetter}</div>
+                            <div>
+                                <div class="reviewer-name">${review.studentName}</div>
+                                <div class="review-rating">${stars}</div>
+                            </div>
+                        </div>
+                        <div class="review-date">${review.date}</div>
+                    </div>
+                    <div class="review-content">${review.comment}</div>
+                    ${review.favorite ? `<div style="margin-top: 8px; color: #28a745; font-size: 0.9rem;"><strong>最喜歡：</strong>${review.favorite}</div>` : ''}
+                    ${review.improvement ? `<div style="margin-top: 5px; color: #ffc107; font-size: 0.9rem;"><strong>建議：</strong>${review.improvement}</div>` : ''}
+                </div>
+            `;
+        }
+
+        // 生成星星評分
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 >= 0.5;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '⭐';
+            }
+            if (hasHalfStar) {
+                stars += '🌟';
+            }
+            for (let i = fullStars + (hasHalfStar ? 1 : 0); i < 5; i++) {
+                stars += '☆';
+            }
+            
+            return stars;
+        }
+
+        // 初始化星星評分功能
+        function initializeStarRatings() {
+            // 整體評分
+            const overallStars = document.querySelectorAll('#overallRating .star');
+            overallStars.forEach((star, index) => {
+                star.addEventListener('click', () => {
+                    currentRatings.overall = index + 1;
+                    updateStarDisplay('#overallRating', currentRatings.overall);
+                });
+                
+                star.addEventListener('mouseenter', () => {
+                    updateStarHover('#overallRating', index + 1);
+                });
+                
+                star.addEventListener('mouseleave', () => {
+                    updateStarDisplay('#overallRating', currentRatings.overall);
+                });
+            });
+
+            // 詳細評分
+            const criteriaRatings = document.querySelectorAll('.criteria-rating');
+            criteriaRatings.forEach(criteriaGroup => {
+                const criteria = criteriaGroup.dataset.criteria;
+                const stars = criteriaGroup.querySelectorAll('.criteria-star');
+                
+                stars.forEach((star, index) => {
+                    star.addEventListener('click', () => {
+                        currentRatings[criteria] = index + 1;
+                        updateCriteriaStarDisplay(criteriaGroup, currentRatings[criteria]);
+                    });
+                    
+                    star.addEventListener('mouseenter', () => {
+                        updateCriteriaStarHover(criteriaGroup, index + 1);
+                    });
+                    
+                    star.addEventListener('mouseleave', () => {
+                        updateCriteriaStarDisplay(criteriaGroup, currentRatings[criteria]);
+                    });
+                });
+            });
+        }
+
+        // 更新星星顯示
+        function updateStarDisplay(selector, rating) {
+            const stars = document.querySelectorAll(`${selector} .star`);
+            stars.forEach((star, index) => {
+                star.classList.toggle('active', index < rating);
+                star.classList.remove('hover');
+            });
+        }
+
+        // 更新星星懸停效果
+        function updateStarHover(selector, rating) {
+            const stars = document.querySelectorAll(`${selector} .star`);
+            stars.forEach((star, index) => {
+                star.classList.toggle('hover', index < rating);
+                star.classList.remove('active');
+            });
+        }
+
+        // 更新評分標準星星顯示
+        function updateCriteriaStarDisplay(container, rating) {
+            const stars = container.querySelectorAll('.criteria-star');
+            stars.forEach((star, index) => {
+                star.classList.toggle('active', index < rating);
+            });
+        }
+
+        // 更新評分標準星星懸停
+        function updateCriteriaStarHover(container, rating) {
+            const stars = container.querySelectorAll('.criteria-star');
+            stars.forEach((star, index) => {
+                star.style.color = index < rating ? '#ffeb3b' : '#ddd';
+            });
+        }
+
+        // 顯示評價表單
+        function showEvaluationForm() {
+            document.getElementById('evaluationModal').classList.add('show');
+        }
+
+        // 關閉評價表單
+        function closeEvaluationModal() {
+            document.getElementById('evaluationModal').classList.remove('show');
+            resetEvaluationForm();
+        }
+
+        // 重置評價表單
+        function resetEvaluationForm() {
+            document.getElementById('evaluationForm').reset();
+            currentRatings = {
+                overall: 0,
+                content: 0,
+                method: 0,
+                interaction: 0,
+                effectiveness: 0
+            };
+            
+            // 重置所有星星
+            document.querySelectorAll('.star, .criteria-star').forEach(star => {
+                star.classList.remove('active');
+                star.style.color = '#ddd';
+            });
+        }
+
+        // 篩選評價
+        function filterEvaluations() {
+            const courseFilter = document.getElementById('courseFilter').value;
+            const periodFilter = document.getElementById('periodFilter').value;
+            const ratingFilter = document.getElementById('ratingFilter').value;
+            
+            let filteredData = evaluationData;
+            
+            if (courseFilter) {
+                filteredData = filteredData.filter(item => 
+                    item.courseName.includes(courseFilter)
+                );
+            }
+            
+            if (ratingFilter) {
+                const minRating = parseFloat(ratingFilter);
+                filteredData = filteredData.filter(item => 
+                    item.overallRating >= minRating && item.overallRating < minRating + 1
+                );
+            }
+            
+            renderEvaluationCards(filteredData);
+        }
+
+        // 按評分篩選
+        function filterByRating(category) {
+            // 更新篩選標籤狀態
+            document.querySelectorAll('.filter-tag').forEach(tag => {
+                tag.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            let filteredData = evaluationData;
+            
+            switch(category) {
+                case 'excellent':
+                    filteredData = evaluationData.filter(item => item.overallRating >= 4.5);
+                    break;
+                case 'good':
+                    filteredData = evaluationData.filter(item => item.overallRating >= 3.5 && item.overallRating < 4.5);
+                    break;
+                case 'average':
+                    filteredData = evaluationData.filter(item => item.overallRating >= 2.5 && item.overallRating < 3.5);
+                    break;
+                case 'poor':
+                    filteredData = evaluationData.filter(item => item.overallRating < 2.5);
+                    break;
+                default:
+                    filteredData = evaluationData;
+            }
+            
+            renderEvaluationCards(filteredData);
+        }
+
+        // 查看課程評價詳情
+        function showCourseReviews(courseId) {
+            const course = evaluationData.find(item => item.id === courseId);
+            if (course) {
+                alert(`${course.courseName} 的詳細評價\n\n總評分: ${course.overallRating}/5\n評價數量: ${course.reviewCount} 則\n\n點擊「查看全部評價」按鈕可以看到完整的評價列表。`);
+            }
+        }
+
+        // 查看全部評價
+        function showAllReviews(courseId) {
+            const course = evaluationData.find(item => item.id === courseId);
+            if (course) {
+                let reviewsText = `${course.courseName} - 全部評價\n\n`;
+                course.reviews.forEach((review, index) => {
+                    reviewsText += `${index + 1}. ${review.studentName} (${review.rating}星)\n`;
+                    reviewsText += `   ${review.comment}\n`;
+                    if (review.favorite) reviewsText += `   最喜歡: ${review.favorite}\n`;
+                    if (review.improvement) reviewsText += `   建議: ${review.improvement}\n`;
+                    reviewsText += `   日期: ${review.date}\n\n`;
+                });
+                alert(reviewsText);
+            }
+        }
+
+        // 匯出報表
+        function exportReport() {
+            alert('正在匯出評價報表...\n\n將包含以下內容：\n• 所有課程評價統計\n• 詳細評分分析\n• 學生反饋摘要\n• 改進建議統計\n\n報表將以 Excel 格式下載。');
+        }
+
+        // 表單提交處理
+        document.getElementById('evaluationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 驗證必填欄位
+            const courseName = document.getElementById('courseSelect').value;
+            const studentName = document.getElementById('studentName').value;
+            const overallRating = currentRatings.overall;
+            
+            if (!courseName || !studentName || overallRating === 0) {
+                alert('請填寫所有必填欄位並完成評分');
+                return;
+            }
+            
+            // 收集表單資料
+            const formData = {
+                courseName: courseName,
+                studentName: studentName,
+                overallRating: overallRating,
+                ratings: {
+                    content: currentRatings.content || 0,
+                    method: currentRatings.method || 0,
+                    interaction: currentRatings.interaction || 0,
+                    effectiveness: currentRatings.effectiveness || 0
+                },
+                comment: document.getElementById('comment').value,
+                favoriteAspect: document.getElementById('favoriteAspect').value,
+                improvementSuggestion: document.getElementById('improvementSuggestion').value,
+                date: new Date().toISOString().split('T')[0]
+            };
+            
+            // 模擬提交
+            setTimeout(() => {
+                alert(`評價提交成功！\n\n課程：${formData.courseName}\n學生：${formData.studentName}\n評分：${formData.overallRating} 星\n\n感謝您的寶貴意見，我們會持續改進教學品質！`);
+                closeEvaluationModal();
+                
+                // 這裡可以將新評價添加到現有資料中
+                // addNewEvaluation(formData);
+            }, 1000);
+        });
+
+        // 點擊彈窗外部關閉
+        document.getElementById('evaluationModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEvaluationModal();
+            }
+        });
+    </script>
+</body>
+</html>

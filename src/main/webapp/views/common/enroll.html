@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>課程報名系統</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+            background: #f5f7fa;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        /* 頁面標題 */
+        .page-header {
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* 功能區塊 */
+        .mockup-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 工具列 */
+        .mock-toolbar {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .mock-btn {
+            padding: 8px 16px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .mock-btn.primary {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .mock-btn.success {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .mock-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .mock-btn:disabled {
+            background: #6c757d;
+            color: white;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* 表單樣式 */
+        .form-input {
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        /* 課程卡片網格 */
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .course-card.selected {
+            border: 3px solid #007bff;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+        }
+
+        .course-card.unavailable {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .course-card.unavailable:hover {
+            transform: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* 課程圖片區域 */
+        .course-image {
+            height: 180px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .course-image.math {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .course-image.english {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .course-image.science {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .course-image.chinese {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .course-status-overlay {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-available {
+            background: rgba(40, 167, 69, 0.9);
+            color: white;
+        }
+
+        .status-full {
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+        }
+
+        .status-few-left {
+            background: rgba(255, 193, 7, 0.9);
+            color: #333;
+        }
+
+        /* 課程內容 */
+        .course-content {
+            padding: 20px;
+        }
+
+        .course-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .course-subtitle {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .course-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        .info-icon {
+            margin-right: 6px;
+            font-size: 1rem;
+        }
+
+        .course-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .course-price {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .course-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-small.primary {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .btn-small:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+
+        /* 統計卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #007bff;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* 彈窗樣式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 25px 25px 0;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .modal-subtitle {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .modal-body {
+            padding: 0 25px 25px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+        }
+
+        .detail-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .detail-content {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .teacher-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .schedule-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+
+        /* 表單頁面樣式 */
+        .registration-form {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .registration-form.show {
+            display: block;
+        }
+
+        .mock-form {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .mock-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border-left: 4px solid #007bff;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        /* 隱藏/顯示 */
+        .hidden {
+            display: none;
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .course-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .mock-toolbar {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .course-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 課程選擇頁面 -->
+        <div id="course-selection">
+            <div class="page-header">
+                <div class="page-title">🎓 課程報名系統</div>
+                <div class="page-subtitle">瀏覽課程介紹，選擇適合的課程進行報名</div>
+            </div>
+
+            <div class="mockup-section">
+                <div class="section-title">🔍 課程篩選</div>
+                <div class="mock-toolbar">
+                    <select class="form-input" style="width: 120px;" id="subjectFilter">
+                        <option value="">所有科目</option>
+                        <option value="數學">數學</option>
+                        <option value="英文">英文</option>
+                        <option value="理化">理化</option>
+                        <option value="國文">國文</option>
+                    </select>
+                    <select class="form-input" style="width: 120px;" id="gradeFilter">
+                        <option value="">所有年級</option>
+                        <option value="國一">國一</option>
+                        <option value="國二">國二</option>
+                        <option value="國三">國三</option>
+                    </select>
+                    <select class="form-input" style="width: 120px;" id="statusFilter">
+                        <option value="">所有狀態</option>
+                        <option value="available">可報名</option>
+                        <option value="few-left">名額有限</option>
+                        <option value="full">已額滿</option>
+                    </select>
+                    <button class="mock-btn primary" onclick="filterCourses()">🔍 篩選</button>
+                    <button class="mock-btn" onclick="clearFilters()">🔄 清除篩選</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">開設課程</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">可報名課程</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">156</div>
+                    <div class="stat-label">總學生數</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">平均滿班率</div>
+                </div>
+            </div>
+
+            <div class="mockup-section">
+                <div class="section-title">📚 課程列表</div>
+                <div class="course-grid" id="courseGrid">
+                    <!-- 課程卡片會動態生成 -->
+                </div>
+            </div>
+
+            <div class="mock-toolbar" style="justify-content: flex-end;">
+                <button class="mock-btn primary" id="proceedBtn" onclick="proceedToForm()" disabled>
+                    ➡️ 進入報名表單
+                </button>
+            </div>
+        </div>
+
+        <!-- 報名表單頁面 -->
+        <div id="registration-form" class="registration-form">
+            <div class="page-header">
+                <div class="page-title">📝 課程報名表</div>
+                <div class="page-subtitle">請填寫完整的學生和家長資訊</div>
+            </div>
+
+            <div class="mock-card" id="selected-course-info">
+                <div class="card-title">✅ 已選擇課程</div>
+                <!-- 選擇的課程資訊會動態顯示在這裡 -->
+            </div>
+
+            <div class="mockup-section">
+                <div class="section-title">👤 學生基本資料</div>
+                <div class="mock-form">
+                    <form id="registrationForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">學生姓名 *</label>
+                                <input class="form-input" type="text" id="studentName" name="studentName" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">身分證號 *</label>
+                                <input class="form-input" type="text" id="studentId" name="studentId" required placeholder="A123456789">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">出生日期 *</label>
+                                <input class="form-input" type="date" id="birthDate" name="birthDate" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">就讀學校</label>
+                                <input class="form-input" type="text" id="school" name="school" placeholder="例：XX國中">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">年級</label>
+                                <select class="form-input" id="currentGrade" name="currentGrade">
+                                    <option value="">請選擇年級</option>
+                                    <option value="國一">國一</option>
+                                    <option value="國二">國二</option>
+                                    <option value="國三">國三</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">學生手機</label>
+                                <input class="form-input" type="tel" id="studentPhone" name="studentPhone" placeholder="0912-345-678">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="mockup-section">
+                <div class="section-title">👨‍👩‍👧‍👦 家長聯絡資訊</div>
+                <div class="mock-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">家長姓名 *</label>
+                            <input class="form-input" type="text" id="parentName" name="parentName" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">與學生關係 *</label>
+                            <select class="form-input" id="relationship" name="relationship" required>
+                                <option value="">請選擇關係</option>
+                                <option value="父親">父親</option>
+                                <option value="母親">母親</option>
+                                <option value="監護人">監護人</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">家長手機 *</label>
+                            <input class="form-input" type="tel" id="parentPhone" name="parentPhone" required placeholder="0912-345-678">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Email *</label>
+                            <input class="form-input" type="email" id="email" name="email" required placeholder="example@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">聯絡地址</label>
+                            <input class="form-input" type="text" id="address" name="address" placeholder="請輸入完整地址">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">緊急聯絡人</label>
+                            <input class="form-input" type="text" id="emergencyContact" name="emergencyContact">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mockup-section">
+                <div class="section-title">📝 其他資訊</div>
+                <div class="mock-form">
+                    <div class="form-group">
+                        <label class="form-label">特殊需求或備註</label>
+                        <textarea class="form-input" id="specialNeeds" name="specialNeeds" rows="3" placeholder="如有特殊學習需求、過敏狀況或其他需要說明的事項，請在此填寫..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">如何得知本補習班</label>
+                        <select class="form-input" id="howKnow" name="howKnow">
+                            <option value="">請選擇</option>
+                            <option value="朋友介紹">朋友介紹</option>
+                            <option value="網路搜尋">網路搜尋</option>
+                            <option value="學校推薦">學校推薦</option>
+                            <option value="廣告傳單">廣告傳單</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mock-toolbar" style="justify-content: space-between;">
+                <button class="mock-btn" onclick="goBackToCourseSelection()">
+                    ← 返回課程選擇
+                </button>
+                <div>
+                    <button class="mock-btn" type="button" onclick="resetForm()">🔄 清除表單</button>
+                    <button class="mock-btn success" onclick="submitRegistration()">
+                        ✅ 確認報名
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 課程詳情彈窗 -->
+    <div id="courseModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">課程詳情</div>
+                <div class="modal-subtitle" id="modalSubtitle">詳細課程資訊</div>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- 課程詳情內容會動態載入 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedCourseData = null;
+        let selectedCourseId = null;
+
+        // 課程資料
+        const courseData = {
+            1: {
+                name: '國二數學進階班',
+                subject: '數學',
+                grade: '國二',
+                teacher: '王志明老師',
+                time: '週二、四 14:00-15:30',
+                fee: 8000,
+                capacity: 30,
+                enrolled: 25,
+                status: 'few-left',
+                icon: '📐',
+                description: '針對國二學生設計的數學進階課程，加強代數運算和幾何概念理解。',
+                objectives: ['掌握二次函數概念', '熟練因式分解技巧', '理解相似形性質', '培養邏輯推理能力'],
+                teacherInfo: {
+                    name: '王志明',
+                    experience: '8年教學經驗',
+                    education: '國立台灣大學數學系碩士',
+                    specialty: '代數、幾何'
+                },
+                schedule: [
+                    { day: '週二', time: '14:00-15:30', content: '代數運算' },
+                    { day: '週四', time: '14:00-15:30', content: '幾何證明' }
+                ],
+                materials: '自編講義、習題本、線上練習平台'
+            },
+            2: {
+                name: '國二英文基礎班',
+                subject: '英文',
+                grade: '國二',
+                teacher: '李美華老師',
+                time: '週一、三 15:40-17:10',
+                fee: 7500,
+                capacity: 25,
+                enrolled: 18,
+                status: 'available',
+                icon: '🇬🇧',
+                description: '強化英文基礎能力，包含文法、單字、閱讀理解和寫作技巧。',
+                objectives: ['擴充單字量至2000字', '掌握基礎文法結構', '提升閱讀理解能力', '培養寫作表達技巧'],
+                teacherInfo: {
+                    name: '李美華',
+                    experience: '6年教學經驗',
+                    education: '國立政治大學英語系學士',
+                    specialty: '文法教學、寫作指導'
+                },
+                schedule: [
+                    { day: '週一', time: '15:40-17:10', content: '文法與寫作' },
+                    { day: '週三', time: '15:40-17:10', content: '閱讀理解' }
+                ],
+                materials: '課本、單字卡、聽力教材、線上學習平台'
+            },
+            3: {
+                name: '國三理化衝刺班',
+                subject: '理化',
+                grade: '國三',
+                teacher: '張文傑老師',
+                time: '週六 09:00-12:00',
+                fee: 9000,
+                capacity: 30,
+                enrolled: 30,
+                status: 'full',
+                icon: '🧪',
+                description: '為國三學生量身打造的理化會考衝刺課程，涵蓋物理化學重點。',
+                objectives: ['熟練物理公式運用', '理解化學反應原理', '加強實驗觀察能力', '提升會考應試技巧'],
+                teacherInfo: {
+                    name: '張文傑',
+                    experience: '10年教學經驗',
+                    education: '國立師範大學物理系碩士',
+                    specialty: '物理實驗、化學反應'
+                },
+                schedule: [
+                    { day: '週六', time: '09:00-10:30', content: '物理概念' },
+                    { day: '週六', time: '10:45-12:00', content: '化學原理' }
+                ],
+                materials: '會考題庫、實驗器材、模擬試題'
+            },
+            4: {
+                name: '國三數學總複習',
+                subject: '數學',
+                grade: '國三',
+                teacher: '王志明老師',
+                time: '週三、五 19:00-20:30',
+                fee: 8500,
+                capacity: 28,
+                enrolled: 22,
+                status: 'available',
+                icon: '📊',
+                description: '國三數學總複習課程，系統性整理三年數學重點，強化會考準備。',
+                objectives: ['整合三年數學概念', '熟練會考題型', '提升計算速度', '加強解題策略'],
+                teacherInfo: {
+                    name: '王志明',
+                    experience: '8年教學經驗',
+                    education: '國立台灣大學數學系碩士',
+                    specialty: '代數、統計、機率'
+                },
+                schedule: [
+                    { day: '週三', time: '19:00-20:30', content: '代數與函數' },
+                    { day: '週五', time: '19:00-20:30', content: '幾何與統計' }
+                ],
+                materials: '總複習講義、歷屆試題、線上測驗系統'
+            },
+            5: {
+                name: '國一英文啟蒙班',
+                subject: '英文',
+                grade: '國一',
+                teacher: '李美華老師',
+                time: '週二、四 16:00-17:30',
+                fee: 7000,
+                capacity: 25,
+                enrolled: 15,
+                status: 'available',
+                icon: '📚',
+                description: '專為國一新生設計的英文入門課程，建立良好的英語學習基礎。',
+                objectives: ['建立基礎語音概念', '學習常用單字片語', '培養聽說讀寫能力', '建立學習信心'],
+                teacherInfo: {
+                    name: '李美華',
+                    experience: '6年教學經驗',
+                    education: '國立政治大學英語系學士',
+                    specialty: '基礎英語、發音教學'
+                },
+                schedule: [
+                    { day: '週二', time: '16:00-17:30', content: '基礎文法' },
+                    { day: '週四', time: '16:00-17:30', content: '單字與會話' }
+                ],
+                materials: '入門教材、發音練習、互動遊戲'
+            },
+            6: {
+                name: '國一國文經典班',
+                subject: '國文',
+                grade: '國一',
+                teacher: '陳雅婷老師',
+                time: '週六 13:00-15:30',
+                fee: 6500,
+                capacity: 20,
+                enrolled: 16,
+                status: 'available',
+                icon: '📜',
+                description: '透過經典文學作品培養國文素養，提升閱讀理解和寫作能力。',
+                objectives: ['培養文學鑑賞能力', '提升閱讀理解技巧', '加強作文寫作', '認識古典文學'],
+                teacherInfo: {
+                    name: '陳雅婷',
+                    experience: '5年教學經驗',
+                    education: '國立師範大學國文系碩士',
+                    specialty: '古典文學、作文指導'
+                },
+                schedule: [
+                    { day: '週六', time: '13:00-14:15', content: '經典選讀' },
+                    { day: '週六', time: '14:30-15:30', content: '寫作練習' }
+                ],
+                materials: '經典選文、寫作範本、古詩詞集'
+            }
+        };
+
+        // 初始化頁面
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCourseCards();
+        });
+
+        // 渲染課程卡片
+        function renderCourseCards(filteredData = null) {
+            const courseGrid = document.getElementById('courseGrid');
+            const data = filteredData || courseData;
+            
+            courseGrid.innerHTML = '';
+            
+            Object.keys(data).forEach(courseId => {
+                const course = data[courseId];
+                const availableSpots = course.capacity - course.enrolled;
+                const statusClass = getStatusClass(course.status);
+                const statusText = getStatusText(course.status, availableSpots);
+                const subjectClass = getSubjectClass(course.subject);
+                
+                const cardHTML = `
+                    <div class="course-card ${course.status === 'full' ? 'unavailable' : ''}" 
+                         data-course-id="${courseId}" 
+                         data-subject="${course.subject}" 
+                         data-grade="${course.grade}" 
+                         data-status="${course.status}"
+                         onclick="selectCourseCard(${courseId})">
+                        <div class="course-image ${subjectClass}">
+                            <span>${course.icon}</span>
+                            <div class="course-status-overlay ${statusClass}">
+                                ${statusText}
+                            </div>
+                        </div>
+                        <div class="course-content">
+                            <div class="course-title">${course.name}</div>
+                            <div class="course-subtitle">${course.teacher}</div>
+                            <div class="course-info">
+                                <div class="info-item">
+                                    <span class="info-icon">🕐</span>
+                                    <span>${course.time}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-icon">📚</span>
+                                    <span>${course.subject} | ${course.grade}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-icon">👥</span>
+                                    <span>${course.enrolled}/${course.capacity}人</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-icon">📍</span>
+                                    <span>還有${availableSpots}個名額</span>
+                                </div>
+                            </div>
+                            <div class="course-footer">
+                                <div class="course-price">${course.fee.toLocaleString()}</div>
+                                <div class="course-actions">
+                                    <button class="btn-small" onclick="event.stopPropagation(); showCourseDetail(${courseId})">
+                                        📖 詳情
+                                    </button>
+                                    ${course.status !== 'full' ? 
+                                        `<button class="btn-small primary" onclick="event.stopPropagation(); selectCourseCard(${courseId})">
+                                            ✅ 選擇
+                                        </button>` : 
+                                        `<button class="btn-small" disabled>已額滿</button>`
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                courseGrid.innerHTML += cardHTML;
+            });
+        }
+
+        // 獲取狀態樣式類別
+        function getStatusClass(status) {
+            switch(status) {
+                case 'available': return 'status-available';
+                case 'few-left': return 'status-few-left';
+                case 'full': return 'status-full';
+                default: return 'status-available';
+            }
+        }
+
+        // 獲取狀態文字
+        function getStatusText(status, availableSpots) {
+            switch(status) {
+                case 'available': return '可報名';
+                case 'few-left': return `剩${availableSpots}位`;
+                case 'full': return '已額滿';
+                default: return '可報名';
+            }
+        }
+
+        // 獲取科目樣式類別
+        function getSubjectClass(subject) {
+            switch(subject) {
+                case '數學': return 'math';
+                case '英文': return 'english';
+                case '理化': return 'science';
+                case '國文': return 'chinese';
+                default: return '';
+            }
+        }
+
+        // 選擇課程卡片
+        function selectCourseCard(courseId) {
+            const course = courseData[courseId];
+            if (course.status === 'full') {
+                alert('此課程已額滿，請選擇其他課程');
+                return;
+            }
+
+            // 清除之前的選擇
+            document.querySelectorAll('.course-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // 標記當前選擇
+            const selectedCard = document.querySelector(`[data-course-id="${courseId}"]`);
+            selectedCard.classList.add('selected');
+
+            // 保存選擇的課程資訊
+            selectedCourseData = course;
+            selectedCourseId = courseId;
+            document.getElementById('proceedBtn').disabled = false;
+        }
+
+        // 顯示課程詳情
+        function showCourseDetail(courseId) {
+            const course = courseData[courseId];
+            const modal = document.getElementById('courseModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalSubtitle = document.getElementById('modalSubtitle');
+            const modalBody = document.getElementById('modalBody');
+
+            modalTitle.textContent = course.name;
+            modalSubtitle.textContent = `${course.subject} | ${course.grade} | ${course.teacher}`;
+
+            const scheduleHTML = course.schedule.map(item => 
+                `<tr>
+                    <td>${item.day}</td>
+                    <td>${item.time}</td>
+                    <td>${item.content}</td>
+                </tr>`
+            ).join('');
+
+            const objectivesHTML = course.objectives.map(obj => 
+                `<li>${obj}</li>`
+            ).join('');
+
+            modalBody.innerHTML = `
+                <div class="detail-section">
+                    <div class="detail-title">📋 課程簡介</div>
+                    <div class="detail-content">${course.description}</div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-title">🎯 教學目標</div>
+                    <div class="detail-content">
+                        <ul style="margin-left: 20px;">
+                            ${objectivesHTML}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-title">👨‍🏫 授課教師</div>
+                    <div class="teacher-info">
+                        <div><strong>姓名：</strong>${course.teacherInfo.name}</div>
+                        <div><strong>經歷：</strong>${course.teacherInfo.experience}</div>
+                        <div><strong>學歷：</strong>${course.teacherInfo.education}</div>
+                        <div><strong>專長：</strong>${course.teacherInfo.specialty}</div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-title">📅 課程安排</div>
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>星期</th>
+                                <th>時間</th>
+                                <th>課程內容</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${scheduleHTML}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-title">📚 教材內容</div>
+                    <div class="detail-content">${course.materials}</div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-title">💰 費用資訊</div>
+                    <div class="detail-content">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+                            <div><strong>月費：</strong>${course.fee.toLocaleString()}</div>
+                            <div><strong>名額：</strong>${course.enrolled}/${course.capacity}人</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    ${course.status !== 'full' ? 
+                        `<button class="mock-btn success" onclick="selectCourseFromModal(${courseId}); closeModal();">
+                            ✅ 選擇此課程
+                        </button>` : 
+                        `<button class="mock-btn" disabled>此課程已額滿</button>`
+                    }
+                </div>
+            `;
+
+            modal.classList.add('show');
+        }
+
+        // 從彈窗選擇課程
+        function selectCourseFromModal(courseId) {
+            selectCourseCard(courseId);
+        }
+
+        // 關閉彈窗
+        function closeModal() {
+            document.getElementById('courseModal').classList.remove('show');
+        }
+
+        // 點擊彈窗外部關閉
+        document.getElementById('courseModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // 篩選課程
+        function filterCourses() {
+            const subjectFilter = document.getElementById('subjectFilter').value;
+            const gradeFilter = document.getElementById('gradeFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            const filteredData = {};
+            
+            Object.keys(courseData).forEach(courseId => {
+                const course = courseData[courseId];
+                let showCourse = true;
+
+                if (subjectFilter && course.subject !== subjectFilter) showCourse = false;
+                if (gradeFilter && course.grade !== gradeFilter) showCourse = false;
+                if (statusFilter && course.status !== statusFilter) showCourse = false;
+
+                if (showCourse) {
+                    filteredData[courseId] = course;
+                }
+            });
+
+            renderCourseCards(filteredData);
+        }
+
+        // 清除篩選
+        function clearFilters() {
+            document.getElementById('subjectFilter').value = '';
+            document.getElementById('gradeFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            renderCourseCards();
+        }
+
+        // 進入報名表單
+        function proceedToForm() {
+            if (!selectedCourseData) {
+                alert('請先選擇課程');
+                return;
+            }
+
+            // 隱藏課程選擇，顯示報名表單
+            document.getElementById('course-selection').classList.add('hidden');
+            document.getElementById('registration-form').classList.remove('hidden');
+            document.getElementById('registration-form').classList.add('show');
+
+            // 顯示選擇的課程資訊
+            const courseInfo = document.getElementById('selected-course-info');
+            courseInfo.innerHTML = `
+                <div class="card-title">✅ 已選擇課程</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div><strong>課程名稱:</strong> ${selectedCourseData.name}</div>
+                    <div><strong>科目:</strong> ${selectedCourseData.subject}</div>
+                    <div><strong>授課教師:</strong> ${selectedCourseData.teacher}</div>
+                    <div><strong>上課時間:</strong> ${selectedCourseData.time}</div>
+                    <div><strong>月費:</strong> ${selectedCourseData.fee.toLocaleString()}</div>
+                    <div><strong>名額狀況:</strong> ${selectedCourseData.enrolled}/${selectedCourseData.capacity}人</div>
+                </div>
+            `;
+        }
+
+        // 返回課程選擇
+        function goBackToCourseSelection() {
+            document.getElementById('registration-form').classList.add('hidden');
+            document.getElementById('course-selection').classList.remove('hidden');
+        }
+
+        // 清除表單
+        function resetForm() {
+            if (confirm('確定要清除所有表單資料嗎？')) {
+                document.getElementById('registrationForm').reset();
+            }
+        }
+
+        // 提交報名
+        function submitRegistration() {
+            const form = document.getElementById('registrationForm');
+            const formData = new FormData(form);
+
+            // 基本驗證
+            const requiredFields = ['studentName', 'studentId', 'birthDate', 'parentName', 'relationship', 'parentPhone', 'email'];
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                const input = document.getElementById(field);
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.style.borderColor = '#dc3545';
+                    setTimeout(() => {
+                        input.style.borderColor = '#dee2e6';
+                    }, 3000);
+                }
+            });
+
+            if (!isValid) {
+                alert('請填寫所有必填欄位（標示 * 的欄位）');
+                return;
+            }
+
+            // 模擬提交處理
+            const submitBtn = event.target;
+            submitBtn.disabled = true;
+            submitBtn.textContent = '處理中...';
+
+            setTimeout(() => {
+                alert(`報名成功！\n\n課程：${selectedCourseData.name}\n學生：${formData.get('studentName')}\n月費：${selectedCourseData.fee.toLocaleString()}\n\n我們會在24小時內與您聯繫確認相關事宜。感謝您的報名！`);
+                
+                // 重置狀態
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '✅ 確認報名';
+                
+                // 可以在這裡重定向到成功頁面或重置表單
+                // location.reload();
+            }, 2000);
+        }
+
+        // 表單驗證
+        document.addEventListener('DOMContentLoaded', function() {
+            // 身分證號格式驗證
+            document.getElementById('studentId').addEventListener('blur', function() {
+                const idPattern = /^[A-Z]\d{9}$/;
+                if (this.value && !idPattern.test(this.value)) {
+                    alert('身分證號格式不正確，請輸入正確格式（例：A123456789）');
+                    this.focus();
+                }
+            });
+
+            // 手機號碼格式驗證
+            document.querySelectorAll('input[type="tel"]').forEach(input => {
+                input.addEventListener('blur', function() {
+                    const phonePattern = /^09\d{8}$/;
+                    if (this.value && !phonePattern.test(this.value.replace(/-/g, ''))) {
+                        alert('手機號碼格式不正確，請輸入正確格式（例：0912345678）');
+                        this.focus();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

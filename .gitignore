@@ -1,0 +1,73 @@
+<<<<<<< HEAD
+# Compiled class file
+*.class
+
+# Log file
+*.log
+logs/
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+replay_pid*
+=======
+
+# 本機與敏感設定（不要提交）
+src/main/resources/application.properties
+src/main/resources/application-local.properties
+.env
+
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+>>>>>>> e720aa3e409bf251bf5f6453cada748481a07cf3
+<<<<<<< HEAD
+uploads/avatars/1_1756182723626.jpg
+logs/smart-campus.log.2025-08-25.0.gz
+=======
+logs/smart-campus.log.2025-08-26.0.gz
+>>>>>>> master

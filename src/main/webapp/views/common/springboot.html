@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hibernate 升級 Spring Boot 完整指南</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .slide {
+            background: white;
+            margin: 30px 0;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            page-break-after: always;
+        }
+
+        .title-slide {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 40px;
+        }
+
+        .title-slide h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .title-slide p {
+            font-size: 1.3em;
+            opacity: 0.9;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin: 30px 0 15px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        h2::before {
+            content: "▶";
+            color: #667eea;
+            margin-right: 10px;
+            font-size: 0.8em;
+        }
+
+        h3 {
+            color: #555;
+            font-size: 1.3em;
+            margin: 20px 0 10px 0;
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .comparison-table tr:hover {
+            background: #e3f2fd;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: attr(data-language);
+            position: absolute;
+            top: 5px;
+            right: 15px;
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 5px solid #667eea;
+        }
+
+        .highlight h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .step {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            transition: transform 0.3s ease;
+        }
+
+        .step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .pros,
+        .cons {
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .pros {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border-left: 5px solid #28a745;
+        }
+
+        .cons {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            border-left: 5px solid #dc3545;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        ul li {
+            margin: 8px 0;
+            padding-left: 10px;
+            position: relative;
+        }
+
+        ul li::before {
+            content: "✓";
+            color: #667eea;
+            font-weight: bold;
+            position: absolute;
+            left: -15px;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .warning::before {
+            content: "⚠️ ";
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 20px;
+                margin: 15px 0;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-table {
+                font-size: 0.9em;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .slide {
+                margin: 0;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 標題頁 -->
+        <div class="slide title-slide">
+            <h1>🚀 Hibernate 升級 Spring Boot</h1>
+            <p>完整遷移指南與實戰範例</p>
+            <p style="margin-top: 30px; font-size: 1.1em;">從傳統架構到現代化開發</p>
+        </div>
+
+        <!-- 概述 -->
+        <div class="slide">
+            <h1>📋 遷移概述</h1>
+
+            <div class="highlight">
+                <h4>🎯 遷移目標</h4>
+                <p>將傳統的 Hibernate + Servlet 架構升級為現代化的 Spring Boot + JPA 架構</p>
+            </div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>項目</th>
+                        <th>Hibernate + Servlet</th>
+                        <th>Spring Boot + JPA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Entity</strong></td>
+                        <td>純 Hibernate 註解</td>
+                        <td>JPA 註解（相容 Hibernate）</td>
+                    </tr>
+                    <tr>
+                        <td><strong>資料存取</strong></td>
+                        <td>手寫 DAO 類別</td>
+                        <td>Spring Data Repository</td>
+                    </tr>
+                    <tr>
+                        <td><strong>控制器</strong></td>
+                        <td>Servlet 類別</td>
+                        <td>Spring Controller</td>
+                    </tr>
+                    <tr>
+                        <td><strong>設定檔</strong></td>
+                        <td>hibernate.cfg.xml</td>
+                        <td>application.properties</td>
+                    </tr>
+                    <tr>
+                        <td><strong>事務管理</strong></td>
+                        <td>手動管理</td>
+                        <td>自動管理 (@Transactional)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>依賴注入</strong></td>
+                        <td>手動建立物件</td>
+                        <td>自動注入 (@Autowired)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 專案設定 -->
+        <div class="slide">
+            <h1>📦 1. 專案設定轉換</h1>
+
+            <h2>Maven 依賴更新</h2>
+
+            <h3>舊版 pom.xml (Hibernate)</h3>
+            <div class="code-block" data-language="XML">
+                <pre>&lt;dependencies&gt;
+    &lt;!-- Hibernate --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+        &lt;artifactId&gt;hibernate-core&lt;/artifactId&gt;
+        &lt;version&gt;5.6.15.Final&lt;/version&gt;
+    &lt;/dependency&gt;
+    
+    &lt;!-- Servlet API --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;jakarta.servlet&lt;/groupId&gt;
+        &lt;artifactId&gt;jakarta.servlet-api&lt;/artifactId&gt;
+        &lt;version&gt;5.0.0&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</pre>
+            </div>
+
+            <h3>新版 pom.xml (Spring Boot)</h3>
+            <div class="code-block" data-language="XML">
+                <pre>&lt;parent&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;3.2.0&lt;/version&gt;
+&lt;/parent&gt;
+
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</pre>
+            </div>
+
+            <h2>設定檔轉換</h2>
+
+            <h3>舊版 hibernate.cfg.xml</h3>
+            <div class="code-block" data-language="XML">
+                <pre>&lt;hibernate-configuration&gt;
+    &lt;session-factory&gt;
+        &lt;property name="connection.driver_class"&gt;com.mysql.cj.jdbc.Driver&lt;/property&gt;
+        &lt;property name="connection.url"&gt;jdbc:mysql://localhost:3306/eams&lt;/property&gt;
+        &lt;property name="connection.username"&gt;root&lt;/property&gt;
+        &lt;property name="connection.password"&gt;password&lt;/property&gt;
+        &lt;property name="dialect"&gt;org.hibernate.dialect.MySQL8Dialect&lt;/property&gt;
+        &lt;property name="hbm2ddl.auto"&gt;update&lt;/property&gt;
+        &lt;property name="show_sql"&gt;true&lt;/property&gt;
+    &lt;/session-factory&gt;
+&lt;/hibernate-configuration&gt;</pre>
+            </div>
+
+            <h3>新版 application.properties</h3>
+            <div class="code-block" data-language="Properties">
+                <pre># 資料庫連線設定
+spring.datasource.drivername=com.microsoft.sqlserver.jdbc.SQLServerDriver
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=test;encrypt=true;trustServerCertificate=true
+spring.datasource.username=chris
+spring.datasource.password=zxcbbn5869
+
+# JPA 設定
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.SQLServerDialect
+spring.jpa.properties.hibernate.format_sql=true
+
+# 伺服器設定
+server.port=8080
+server.servlet.context-path=/eams</pre>
+            </div>
+        </div>
+
+        <!-- Entity 轉換 -->
+        <div class="slide">
+            <h1>🏗️ 2. Entity 轉換</h1>
+
+            <h2>主要變化</h2>
+            <div class="highlight">
+                <h4>🔄 Package 變更</h4>
+                <p><code>javax.persistence.*</code> → <code>jakarta.persistence.*</code></p>
+            </div>
+
+            <h3>舊版 Hibernate Entity</h3>
+            <div class="code-block" data-language="Java">
+                <pre>import javax.persistence.*;
+
+@Entity
+@Table(name = "student")
+public class Student {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    
+    @Column(name = "name")
+    private String name;
+    
+    // getter, setter...
+}</pre>
+            </div>
+
+            <h3>新版 JPA Entity</h3>
+            <div class="code-block" data-language="Java">
+                <pre>import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "student")
+public class Student {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    
+    @Column(name = "name")
+    private String name;
+    
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+    
+    // getter, setter...
+}</pre>
+            </div>
+        </div>
+
+        <!-- DAO 轉 Repository -->
+        <div class="slide">
+            <h1>🗄️ 3. DAO → Repository 轉換</h1>
+
+            <h3>舊版 StudentDAO（手寫 CRUD）</h3>
+            <div class="code-block" data-language="Java">
+                <pre>public class StudentDAO {
+    private SessionFactory sessionFactory;
+    
+    public Student save(Student student) {
+        Session session = sessionFactory.openSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            session.save(student);
+            transaction.commit();
+            return student;
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            throw e;
+        } finally {
+            session.close();
+        }
+    }
+    
+    public Student findById(Integer id) {
+        Session session = sessionFactory.openSession();
+        try {
+            return session.get(Student.class, id);
+        } finally {
+            session.close();
+        }
+    }
+}</pre>
+            </div>
+
+            <h3>新版 Spring Data Repository</h3>
+            <div class="code-block" data-language="Java">
+                <pre>@Repository
+public interface StudentRepository extends JpaRepository&lt;Student, Integer&gt; {
+    
+    // 基本 CRUD 方法已內建：
+    // save(), findById(), findAll(), deleteById()
+    
+    // 自訂查詢方法
+    Optional&lt;Student&gt; findByEmail(String email);
+    
+    List&lt;Student&gt; findByNameContaining(String name);
+    
+    @Query("SELECT s FROM Student s WHERE s.name = :name")
+    Optional&lt;Student&gt; findByName(@Param("name") String name);
+    
+    boolean existsByEmail(String email);
+}</pre>
+            </div>
+        </div>
+
+        <!-- Servlet 轉 Controller -->
+        <div class="slide">
+            <h1>🎮 4. Servlet → Controller 轉換</h1>
+
+            <h3>舊版 CourseServlet（傳統手動處理）</h3>
+            <div class="code-block" data-language="Java">
+                <pre>@WebServlet("/CourseServlet")
+public class CourseServlet extends HttpServlet {
+    private CourseService courseService = new CourseService(); // 手動建立
+    
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        
+        List&lt;Course&gt; courses = courseService.getAllCourse();
+        
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        
+        // 😰 手動建構 JSON 字串（容易出錯、難維護）
+        StringBuilder json = new StringBuilder("[");
+        for (int i = 0; i &lt; courses.size(); i++) {
+            Course c = courses.get(i);
+            json.append("{")
+                .append("\"id\":").append(c.getId()).append(",")
+                .append("\"name\":\"").append(escapeJson(c.getName())).append("\",")
+                .append("\"startDate\":\"").append(c.getStartDate()).append("\"")
+                .append("}");
+            if (i &lt; courses.size() - 1) json.append(",");
+        }
+        json.append("]");
+        
+        resp.getWriter().write(json.toString());
+    }
+}</pre>
+            </div>
+
+            <h3>新版 Spring Controller（自動 JSON 處理）</h3>
+            <div class="code-block" data-language="Java">
+                <pre>@RestController
+@RequestMapping("/api/course")
+public class CourseApiController {
+    
+    @Autowired  // 😎 自動注入，不需手動建立
+    private CourseService courseService;
+    
+    // ✨ 查詢所有課程 - Map 包裝避免序列化問題
+    @GetMapping("/all")
+    public List&lt;Map&lt;String, Object&gt;&gt; getAllCourse() {
+        List&lt;Course&gt; all = courseService.getAllCourse();
+        List&lt;Map&lt;String, Object&gt;&gt; list = new ArrayList&lt;&gt;();
+        
+        for (Course c : all) {
+            Map&lt;String, Object&gt; map = new HashMap&lt;&gt;();
+            map.put("id", c.getId());
+            map.put("name", c.getName());
+            map.put("type", c.getType());
+            map.put("description", c.getDescription());
+            map.put("maxCapacity", c.getMaxCapacity());
+            map.put("minCapacity", c.getMinCapacity());
+            map.put("fee", c.getFee());
+            map.put("startDate", c.getStartDate());  // LocalDate 自動轉換
+            map.put("endDate", c.getEndDate());
+            map.put("status", c.getStatus());
+            
+            list.add(map);
+        }
+        return list;  // 😎 Spring 自動轉換為 JSON
+    }
+}</pre>
+            </div>
+        </div>
+
+        <!-- Map 包裝技巧詳解 -->
+        <div class="slide">
+            <h1>🗂️ Map 包裝技巧詳解</h1>
+
+            <div class="highlight">
+                <h4>🎯 為什麼要用 Map 包裝？</h4>
+                <p>直接回傳 Entity 會遇到 JSON 序列化問題，特別是像 Course 這樣的複雜 JPA 關聯實體</p>
+            </div>
+
+            <h2>❌ 直接回傳 Entity 的問題</h2>
+            <div class="code-block" data-language="Java">
+                <pre>// 🚫 危險的寫法 - 直接回傳複雜 Entity
+@GetMapping("/all")
+public List&lt;Course&gt; getAllCourse() {
+    return courseService.getAllCourse(); // 會出現以下問題：
+}
+
+/* 💥 可能的錯誤：
+ * 1. 無限遞迴：Course → CourseEnroll → Student → CourseEnroll...
+ * 2. LazyInitializationException：延遲載入例外
+ * 3. LocalDate 序列化問題
+ * 4. 415 Unsupported Media Type：Jackson 無法處理複雜關聯
+ * 5. 敏感資料洩露：可能包含不該暴露的欄位
+ */</pre>
+            </div>
+
+            <h2>✅ 實際程式碼：新增/更新課程</h2>
+            <div class="code-block" data-language="Java">
+                <pre>// course新增跟更新同時處理
+@PostMapping("/add")
+@ResponseBody
+public ResponseEntity&lt;String&gt; addCourse(@RequestBody Map&lt;String, Object&gt; courseData) {
+    System.out.println("收到 API 請求：" + courseData);
+    
+    try {
+        Course course = new Course();
+        
+        // 手動設定各個欄位，避免 Jackson 轉換問題
+        if (courseData.get("id") != null) {
+            course.setId((Integer) courseData.get("id"));  // 有 ID = 更新
+        }
+        course.setName((String) courseData.get("name"));
+        course.setType((String) courseData.get("type"));
+        course.setDescription((String) courseData.get("description"));
+        course.setMaxCapacity((Integer) courseData.get("maxCapacity"));
+        course.setMinCapacity((Integer) courseData.get("minCapacity"));
+        course.setFee((Integer) courseData.get("fee"));
+        course.setStatus((String) courseData.get("status"));
+        course.setRemark((String) courseData.get("remark"));
+        
+        // 手動處理日期轉換
+        String startDateStr = (String) courseData.get("startDate");
+        if (startDateStr != null && !startDateStr.trim().isEmpty()) {
+            course.setStartDate(LocalDate.parse(startDateStr));
+        }
+        
+        String endDateStr = (String) courseData.get("endDate");
+        if (endDateStr != null && !endDateStr.trim().isEmpty()) {
+            course.setEndDate(LocalDate.parse(endDateStr));
+        }
+        
+        courseService.saveCourse(course);
+        return ResponseEntity.ok("成功新增：" + course.getName());
+        
+    } catch (Exception e) {
+        System.err.println("新增失敗：" + e.getMessage());
+        return ResponseEntity.badRequest().body("新增失敗：" + e.getMessage());
+    }
+}</pre>
+            </div>
+        </div>
+
+        <!-- 前後端完整配合範例 -->
+        <div class="slide">
+            <h1>🤝 前後端完整配合範例</h1>
+
+            <h2>💻 前端 JavaScript（課程新增表單）</h2>
+            <div class="code-block" data-language="JavaScript">
+                <pre>// 儲存課程資料
+function saveCourse(event) {
+    event.preventDefault(); // 阻止表單預設送出行為
+
+    // 📝 收集表單資料
+    const id = document.getElementById('courseIdShow').value;
+    const name = document.getElementById('courseName').value;
+    const type = document.getElementById('courseType').value;
+    const maxCapacity = document.getElementById('maxCapacity').value;
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    // 🎯 確保資料型態正確匹配後端
+    const course = {
+        id: id && id.trim() !== '' ? parseInt(id) : null,          // 有 ID = 更新
+        name: name || '',
+        type: type || '',
+        maxCapacity: maxCapacity && maxCapacity.trim() !== '' ? parseInt(maxCapacity) : null,
+        startDate: startDate && startDate.trim() !== '' ? startDate : null,    // "2025-07-17"
+        endDate: endDate && endDate.trim() !== '' ? endDate : null,
+        status: status || 'active'
+    };
+
+    // ✅ 前端驗證
+    if (!course.name || !course.type || !course.maxCapacity || !course.startDate || !course.endDate) {
+        Swal.fire({
+            icon: 'warning',
+            title: '請填寫所有必填欄位',
+            confirmButtonText: '確定'
+        });
+        return;
+    }
+
+    // 🚀 發送到後端
+    fetch('${pageContext.request.contextPath}/api/course/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(course)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text();
+    })
+    .then(msg => {
+        Swal.fire({
+            icon: 'success',
+            title: msg || '新增成功',
+            confirmButtonText: '確定'
+        }).then(() => {
+            hideCourseForm();    // 隱藏表單
+            loadCourseList();    // 重新載入列表
+        });
+    })
+    .catch(error => {
+        Swal.fire({
+            icon: 'error',
+            title: '新增失敗',
+            text: error.message,
+            confirmButtonText: '確定'
+        });
+    });
+}</pre>
+            </div>
+
+            <div class="highlight">
+                <h4>🎯 前後端配合重點</h4>
+                <ul>
+                    <li><strong>資料型態匹配：</strong>前端 parseInt() 對應後端 Integer</li>
+                    <li><strong>日期格式：</strong>HTML date input → "2025-07-17" → LocalDate.parse()</li>
+                    <li><strong>null 值處理：</strong>前端空值 → null，後端判斷 null</li>
+                    <li><strong>新增/更新邏輯：</strong>前端有 ID → 後端判斷更新</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Session 處理與關聯實體操作 -->
+        <div class="slide">
+            <h1>🔐 Session 處理與關聯實體操作</h1>
+
+            <h3>舊版 EnrollCourseServlet</h3>
+            <div class="code-block" data-language="Java">
+                <pre>@WebServlet("/EnrollCourseServlet")
+public class EnrollCourseServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+        // 😰 手動建立 Service 物件
+        CourseEnrollService service = new CourseEnrollService();
+        StudentService studentService = new StudentService();
+        CourseService courseService = new CourseService();
+        
+        // 😰 手動取得 Session 資料
+        Integer studentId = (Integer) req.getSession().getAttribute("studentId");
+        String courseIdStr = req.getParameter("courseId");
+        
+        int courseId = Integer.parseInt(courseIdStr);
+        
+        // 😰 手動查詢關聯實體
+        Student student = studentService.getStudentById(studentId);
+        Course course = courseService.getCourseById(courseId);
+        
+        CourseEnroll courseEnroll = new CourseEnroll();
+        courseEnroll.setStudent(student);
+        courseEnroll.setCourse(course);
+        courseEnroll.setEnrollDate(LocalDate.now());
+        courseEnroll.setStatus("enrolled");
+        
+        boolean success = service.addCourseEnroll(courseEnroll);
+    }
+}</pre>
+            </div>
+
+            <h3>新版 Spring Controller</h3>
+            <div class="code-block" data-language="Java">
+                <pre>@RestController
+@RequestMapping("/api/course")
+public class CourseEnrollController {
+    
+    // 😎 自動注入，不需手動建立
+    @Autowired
+    private CourseEnrollService courseEnrollService;
+    @Autowired
+    private StudentService studentService;
+    @Autowired
+    private CourseService courseService;
+    
+    // 新增報名
+    @PostMapping("/enroll/add")
+    @ResponseBody
+    public ResponseEntity&lt;String&gt; addCourseEnroll(
+            @RequestBody Map&lt;String, Object&gt; courseEnrollData,
+            HttpSession session) {  // 😎 Spring 自動注入 Session
+        
+        try {
+            CourseEnroll courseEnroll = new CourseEnroll();
+            
+            // 😎 簡潔的 Session 資料取得
+            Integer studentId = (Integer) session.getAttribute("studentId");
+            
+            // 😎 清楚的關聯實體處理
+            Student student = studentService.getStudentById(studentId);
+            Course course = courseService.getCourseById((Integer) courseEnrollData.get("courseId"));
+            
+            courseEnroll.setStudent(student);
+            courseEnroll.setCourse(course);
+            courseEnroll.setEnrollDate(LocalDate.now());
+            courseEnroll.setStatus("enrolled");
+            
+            courseEnrollService.saveCourseEnroll(courseEnroll);
+            return ResponseEntity.ok("成功報名課程：" + course.getName());
+            
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("報名失敗：" + e.getMessage());
+        }
+    }
+}</pre>
+            </div>
+        </div>
+
+        <!-- @JsonManagedReference/@JsonBackReference 詳解 -->
+        <div class="slide">
+            <h1>🔄 @JsonManagedReference/@JsonBackReference 詳解</h1>
+
+            <div class="highlight">
+                <h4>⚠️ 為什麼必須成對使用？</h4>
+                <p>沒有正確使用這些註解，會導致 <strong>JSON 無限循環</strong>、<strong>JPA 關聯管理問題</strong>、<strong>資料刪除/更新失敗</strong>！</p>
+            </div>
+
+            <h2>❌ 沒有使用註解的問題</h2>
+            <div class="code-block" data-language="Java">
+                <pre>// 🚫 危險！沒有 JSON 註解的雙向關聯
+@Entity
+public class Course {
+    @OneToMany(mappedBy = "course", fetch = FetchType.EAGER)
+    private List&lt;CourseEnroll&gt; courseEnroll = new LinkedList&lt;&gt;();  // 沒有註解
+}
+
+@Entity  
+public class CourseEnroll {
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    private Course course;  // 沒有註解
+}
+
+/* 🔥 會導致的問題：
+ * 1. JSON 序列化無限循環：Course → CourseEnroll → Course → CourseEnroll...
+ * 2. Jackson 序列化失敗："Infinite recursion (StackOverflowError)"
+ * 3. JPA 關聯管理混亂：級聯刪除失敗、更新關聯失敗、孤兒記錄產生
+ */</pre>
+            </div>
+
+            <h2>✅ 正確的成對使用</h2>
+            <div class="code-block" data-language="Java">
+                <pre>@Entity
+@Table(name = "course")
+public class Course {
+    // ✅ @JsonManagedReference：主控端（被序列化）
+    @OneToMany(mappedBy = "course", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference("course-enroll")  // 指定名稱避免混淆
+    private List&lt;CourseEnroll&gt; courseEnroll = new LinkedList&lt;&gt;();
+    
+    @OneToMany(mappedBy = "course", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference("course-schedule")
+    private List&lt;CourseSchedule&gt; courseSchedule = new LinkedList&lt;&gt;();
+}
+
+@Entity
+@Table(name = "course_enroll")
+public class CourseEnroll {
+    // ✅ @JsonBackReference：被控端（不被序列化，避免循環）
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    @JsonBackReference("course-enroll")  // 必須與對應的 @JsonManagedReference 名稱相同
+    private Course course;
+    
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    @JsonBackReference("student-enroll")
+    private Student student;
+}</pre>
+            </div>
+
+            <div class="warning">
+                <strong>💡 最佳實踐建議</strong><br>
+                1. <strong>所有雙向關聯都要成對使用</strong><br>
+                2. <strong>使用有意義的名稱</strong>：如 "course-enroll", "student-enroll"<br>
+                3. <strong>複雜情況用 Map 包裝</strong>：完全避免 Entity 序列化問題
+            </div>
+        </div>
+
+        <!-- 常見問題與實戰解決方案 -->
+        <div class="slide">
+            <h1>❗ 常見問題與實戰解決方案</h1>
+
+            <div class="warning">
+                <strong>Package Import 錯誤</strong><br>
+                <strong>問題：</strong>javax.persistence 找不到<br>
+                <strong>解決：</strong>Spring Boot 3.x 要改用 jakarta.persistence
+            </div>
+
+            <div class="warning">
+                <strong>415 Unsupported Media Type</strong><br>
+                <strong>問題：</strong>複雜 Entity（如 Course）無法自動綁定 JSON<br>
+                <strong>原因：</strong>Entity 有太多 JPA 關聯、EAGER 載入、@JsonManagedReference<br>
+                <strong>解決：</strong>改用 Map&lt;String, Object&gt; 手動處理
+            </div>
+
+            <div class="warning">
+                <strong>JSON 序列化無限循環</strong><br>
+                <strong>問題：</strong>直接回傳 Entity 導致 StackOverflowError<br>
+                <strong>原因：</strong>雙向關聯沒有正確使用 @JsonManagedReference/@JsonBackReference<br>
+                <strong>解決：</strong>使用 Map 包裝或正確設定 JSON 註解
+            </div>
+
+            <h3>實戰解決範例：複雜 Entity 的處理</h3>
+            <div class="code-block" data-language="Java">
+                <pre>// ❌ 問題：直接用 @RequestBody Course
+@PostMapping("/add")
+public ResponseEntity&lt;String&gt; addCourse(@RequestBody Course course) {
+    // 💥 415 錯誤：Jackson 無法解析複雜 Entity
+}
+
+// ✅ 解決：Map 接收，手動設定 Entity
+@PostMapping("/add") 
+@ResponseBody
+public ResponseEntity&lt;String&gt; addCourse(@RequestBody Map&lt;String, Object&gt; courseData) {
+    try {
+        Course course = new Course();
+        
+        // 手動設定，完全控制
+        course.setName((String) courseData.get("name"));
+        course.setMaxCapacity((Integer) courseData.get("maxCapacity"));
+        
+        // 手動處理日期
+        String startDateStr = (String) courseData.get("startDate");
+        if (startDateStr != null && !startDateStr.trim().isEmpty()) {
+            course.setStartDate(LocalDate.parse(startDateStr));
+        }
+        
+        courseService.saveCourse(course);
+        return ResponseEntity.ok("成功新增：" + course.getName());
+        
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().body("新增失敗：" + e.getMessage());
+    }
+}</pre>
+            </div>
+        </div>
+
+        <!-- 遷移步驟 -->
+        <div class="slide">
+            <h1>🚀 完整遷移步驟</h1>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h4>建立 Spring Boot 專案</h4>
+                    <p>使用 Spring Initializr 建立專案，選擇 Web、JPA、MySQL Driver 依賴</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h4>遷移設定檔</h4>
+                    <p>將 hibernate.cfg.xml 轉換到 application.properties</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h4>更新 Entity</h4>
+                    <p>更新 import package，正確設定 @JsonManagedReference/@JsonBackReference</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h4>建立 Repository</h4>
+                    <p>為每個 Entity 建立 Repository interface</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <h4>更新 Service</h4>
+                    <p>加入 @Service、@Autowired、@Transactional 註解</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">6</div>
+                    <h4>轉換 Controller</h4>
+                    <p>將 Servlet 改寫為 Spring Controller，使用 Map 處理複雜 Entity</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">7</div>
+                    <h4>建立主程式</h4>
+                    <p>建立 @SpringBootApplication 主類別</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">8</div>
+                    <h4>測試與調整</h4>
+                    <p>測試所有功能，調整設定和程式碼</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 實戰經驗總結 -->
+        <div class="slide">
+            <h1>🎉 實戰經驗總結</h1>
+
+            <div class="highlight">
+                <h4>🎯 核心轉換要點</h4>
+                <ul>
+                    <li><strong>Entity：</strong>javax.persistence → jakarta.persistence，正確設定
+                        @JsonManagedReference/@JsonBackReference</li>
+                    <li><strong>Controller：</strong>用 Map&lt;String, Object&gt; 取代直接的 Entity 處理，避免 JSON 序列化問題</li>
+                    <li><strong>Session：</strong>HttpSession 參數注入，比 @SessionAttribute 更直觀</li>
+                    <li><strong>關聯處理：</strong>先查詢實體再設定關聯，邏輯清楚且安全</li>
+                    <li><strong>錯誤處理：</strong>ResponseEntity 提供統一的 HTTP 回應格式</li>
+                </ul>
+            </div>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h3><span class="emoji">💡</span>實戰最佳實踐</h3>
+                    <ul>
+                        <li><strong>複雜 Entity 用 Map：</strong>避免 415 錯誤和 JSON 循環</li>
+                        <li><strong>手動處理資料型態：</strong>前端 parseInt 對應後端 Integer</li>
+                        <li><strong>統一的日期格式：</strong>HTML date → "2025-07-17" → LocalDate</li>
+                        <li><strong>完整的錯誤處理：</strong>HTTP 狀態碼 + 使用者友善訊息</li>
+                        <li><strong>新增/更新同時處理：</strong>根據 ID 是否存在判斷操作</li>
+                    </ul>
+                </div>
+
+                <div class="pros">
+                    <h3><span class="emoji">🚀</span>效能與維護</h3>
+                    <ul>
+                        <li><strong>避免 EAGER 載入：</strong>減少不必要的資料庫查詢</li>
+                        <li><strong>精確控制 API 回應：</strong>只回傳前端需要的欄位</li>
+                        <li><strong>前後端解耦：</strong>Entity 結構變化不影響 API</li>
+                        <li><strong>型別安全：</strong>明確的資料轉換和驗證</li>
+                        <li><strong>可重用的轉換邏輯：</strong>convertToMap 方法</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h2>📊 轉換前後對比總結</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>項目</th>
+                        <th>轉換前（Servlet）</th>
+                        <th>轉換後（Spring Boot）</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>JSON 處理</strong></td>
+                        <td>手動拼接字串，容易出錯</td>
+                        <td>Map 包裝，自動序列化</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Session 處理</strong></td>
+                        <td>req.getSession().getAttribute()</td>
+                        <td>HttpSession session 參數注入</td>
+                    </tr>
+                    <tr>
+                        <td><strong>依賴管理</strong></td>
+                        <td>手動 new Service()</td>
+                        <td>@Autowired 自動注入</td>
+                    </tr>
+                    <tr>
+                        <td><strong>錯誤處理</strong></td>
+                        <td>手動設定 HTTP 狀態碼</td>
+                        <td>ResponseEntity 統一處理</td>
+                    </tr>
+                    <tr>
+                        <td><strong>資料綁定</strong></td>
+                        <td>req.getParameter() 逐一取得</td>
+                        <td>@RequestBody Map 批次處理</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div
+                style="text-align: center; margin-top: 40px; padding: 20px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 10px;">
+                <h2>🎊 恭喜掌握現代化 Java Web 開發！</h2>
+                <p><strong>從傳統 Servlet 到 Spring Boot，你已經完成了架構升級的重要里程碑</strong></p>
+                <p style="margin-top: 15px; font-size: 1.1em;">✨ 更高的開發效率 • 🛡️ 更好的錯誤處理 • 🔧 更容易維護的程式碼</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 簡單的印刷樣式優化
+        window.addEventListener('beforeprint', function () {
+            document.body.style.background = 'white';
+        });
+
+        window.addEventListener('afterprint', function () {
+            document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        });
+    </script>
+</body>
+
+</html>

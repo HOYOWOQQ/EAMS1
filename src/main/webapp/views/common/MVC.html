@@ -1,0 +1,203 @@
+<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="viewGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#45a049;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="controllerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2196F3;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1976D2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="modelGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF9800;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F57C00;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="serviceGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9C27B0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7B1FA2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="daoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#607D8B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#455A64;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="1200" height="800" fill="#f8f9fa" />
+
+  <!-- 標題 -->
+  <text x="600" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold"
+    fill="#333">
+    Smart Campus Affairs Platform - MVC 架構圖
+  </text>
+
+  <!-- View Layer -->
+  <g>
+    <rect x="50" y="80" width="280" height="180" rx="10" fill="url(#viewGradient)" filter="url(#shadow)" />
+    <text x="190" y="105" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold"
+      fill="white">
+      View Layer (前端視圖層)
+    </text>
+    <text x="190" y="130" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white">
+      webapp/views/
+    </text>
+
+    <!-- View 模組列表 -->
+    <text x="70" y="155" font-family="Arial, sans-serif" font-size="12" fill="white">• attendance/ (出勤管理頁面)</text>
+    <text x="70" y="175" font-family="Arial, sans-serif" font-size="12" fill="white">• course/ (課程管理頁面)</text>
+    <text x="70" y="195" font-family="Arial, sans-serif" font-size="12" fill="white">• member/ (會員管理頁面)</text>
+    <text x="70" y="215" font-family="Arial, sans-serif" font-size="12" fill="white">• notice/ (通知管理頁面)</text>
+    <text x="70" y="235" font-family="Arial, sans-serif" font-size="12" fill="white">• fee/ (費用管理頁面) • score/
+      (成績管理頁面)</text>
+  </g>
+
+  <!-- Controller Layer -->
+  <g>
+    <rect x="460" y="80" width="280" height="180" rx="10" fill="url(#controllerGradient)" filter="url(#shadow)" />
+    <text x="600" y="105" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold"
+      fill="white">
+      Controller Layer (控制層)
+    </text>
+    <text x="600" y="130" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white">
+      src/main/java/servlet/
+    </text>
+
+    <!-- Controller 模組列表 -->
+    <text x="480" y="155" font-family="Arial, sans-serif" font-size="12" fill="white">• AttendanceServlet (出勤控制器)</text>
+    <text x="480" y="175" font-family="Arial, sans-serif" font-size="12" fill="white">• CourseServlet (課程控制器)</text>
+    <text x="480" y="195" font-family="Arial, sans-serif" font-size="12" fill="white">• MemberServlet (會員控制器)</text>
+    <text x="480" y="215" font-family="Arial, sans-serif" font-size="12" fill="white">• NoticeServlet (通知控制器)</text>
+    <text x="480" y="235" font-family="Arial, sans-serif" font-size="12" fill="white">• FeeServlet (費用控制器) •
+      ScoreServlet (成績控制器)</text>
+  </g>
+
+  <!-- Model Layer -->
+  <g>
+    <rect x="870" y="80" width="280" height="180" rx="10" fill="url(#modelGradient)" filter="url(#shadow)" />
+    <text x="1010" y="105" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold"
+      fill="white">
+      Model Layer (模型層)
+    </text>
+    <text x="1010" y="130" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white">
+      src/main/java/model/
+    </text>
+
+    <!-- Model 模組列表 -->
+    <text x="890" y="155" font-family="Arial, sans-serif" font-size="12" fill="white">• Attendance.java (出勤實體類)</text>
+    <text x="890" y="175" font-family="Arial, sans-serif" font-size="12" fill="white">• Course.java (課程實體類)</text>
+    <text x="890" y="195" font-family="Arial, sans-serif" font-size="12" fill="white">• Member.java (會員實體類)</text>
+    <text x="890" y="215" font-family="Arial, sans-serif" font-size="12" fill="white">• Notice.java (通知實體類)</text>
+    <text x="890" y="235" font-family="Arial, sans-serif" font-size="12" fill="white">• Fee.java (費用實體類) • Score.java
+      (成績實體類)</text>
+  </g>
+
+  <!-- Service Layer -->
+  <g>
+    <rect x="255" y="320" width="280" height="180" rx="10" fill="url(#serviceGradient)" filter="url(#shadow)" />
+    <text x="395" y="345" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold"
+      fill="white">
+      Service Layer (業務邏輯層)
+    </text>
+    <text x="395" y="370" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white">
+      src/main/java/service/
+    </text>
+
+    <!-- Service 模組列表 -->
+    <text x="275" y="395" font-family="Arial, sans-serif" font-size="12" fill="white">• AttendanceService
+      (出勤業務邏輯)</text>
+    <text x="275" y="415" font-family="Arial, sans-serif" font-size="12" fill="white">• CourseService (課程業務邏輯)</text>
+    <text x="275" y="435" font-family="Arial, sans-serif" font-size="12" fill="white">• MemberService (會員業務邏輯)</text>
+    <text x="275" y="455" font-family="Arial, sans-serif" font-size="12" fill="white">• NoticeService (通知業務邏輯)</text>
+    <text x="275" y="475" font-family="Arial, sans-serif" font-size="12" fill="white">• FeeService (費用業務邏輯) •
+      ScoreService (成績業務邏輯)</text>
+  </g>
+
+  <!-- DAO Layer -->
+  <g>
+    <rect x="665" y="320" width="280" height="180" rx="10" fill="url(#daoGradient)" filter="url(#shadow)" />
+    <text x="805" y="345" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold"
+      fill="white">
+      DAO Layer (資料存取層)
+    </text>
+    <text x="805" y="370" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white">
+      src/main/java/dao/
+    </text>
+
+    <!-- DAO 模組列表 -->
+    <text x="685" y="395" font-family="Arial, sans-serif" font-size="12" fill="white">• AttendanceDAO (出勤資料存取)</text>
+    <text x="685" y="415" font-family="Arial, sans-serif" font-size="12" fill="white">• CourseDAO (課程資料存取)</text>
+    <text x="685" y="435" font-family="Arial, sans-serif" font-size="12" fill="white">• MemberDAO (會員資料存取)</text>
+    <text x="685" y="455" font-family="Arial, sans-serif" font-size="12" fill="white">• NoticeDAO (通知資料存取)</text>
+    <text x="685" y="475" font-family="Arial, sans-serif" font-size="12" fill="white">• FeeDAO (費用資料存取) • ScoreDAO
+      (成績資料存取)</text>
+  </g>
+
+  <!-- Database -->
+  <g>
+    <rect x="460" y="560" width="280" height="120" rx="10" fill="#34495e" filter="url(#shadow)" />
+    <text x="600" y="585" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold"
+      fill="white">
+      Database Layer (資料庫層)
+    </text>
+    <text x="600" y="610" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white">
+      MySQL Database
+    </text>
+    <text x="600" y="635" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="white">
+      attendance, courses, members, notices, fees, scores tables
+    </text>
+    <text x="600" y="655" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="white">
+      course_schedules, enrollments, users tables
+    </text>
+  </g>
+
+  <!-- 箭頭和流程 -->
+  <!-- View to Controller -->
+  <path d="M 330 170 L 460 170" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
+  <text x="395" y="165" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#333">HTTP
+    Request</text>
+
+  <!-- Controller to View -->
+  <path d="M 460 190 L 330 190" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead2)" />
+  <text x="395" y="205" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#333">HTTP
+    Response</text>
+
+  <!-- Controller to Service -->
+  <path d="M 550 260 L 450 320" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
+  <text x="485" y="285" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#333">業務邏輯調用</text>
+
+  <!-- Service to DAO -->
+  <path d="M 535 410 L 665 410" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
+  <text x="600" y="405" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#333">資料存取</text>
+
+  <!-- DAO to Database -->
+  <path d="M 805 500 L 650 560" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
+  <text x="720" y="525" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#333">SQL 查詢</text>
+
+  <!-- Controller to Model -->
+  <path d="M 740 170 L 870 170" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
+  <text x="805" y="165" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#333">資料綁定</text>
+
+  <!-- 箭頭標記定義 -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+    </marker>
+    <marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+      <polygon points="0 3.5, 10 0, 10 7" fill="#333" />
+    </marker>
+  </defs>
+
+  <!-- 專案結構說明 -->
+  <g>
+    <rect x="50" y="720" width="1100" height="60" rx="5" fill="#ecf0f1" stroke="#bdc3c7" />
+    <text x="70" y="740" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#2c3e50">
+      專案結構路徑：
+    </text>
+    <text x="70" y="760" font-family="Arial, sans-serif" font-size="12" fill="#34495e">
+      Smart Campus: src/main/java/{dao, model, service, servlet} + webapp/{views, resources} → 完整的六大模組 MVC 實作
+    </text>
+  </g>
+</svg>

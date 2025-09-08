@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前台管理功能頁面示意圖</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+            background: #f5f7fa;
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 功能選單 */
+        .function-menu {
+            width: 300px;
+            background: #2c3e50;
+            color: white;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .menu-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #3498db;
+        }
+
+        .menu-category {
+            margin-bottom: 20px;
+        }
+
+        .category-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #34495e;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .category-items {
+            display: none;
+            padding-left: 10px;
+        }
+
+        .category-items.expanded {
+            display: block;
+        }
+
+        .menu-item {
+            padding: 8px 15px;
+            margin: 2px 0;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .menu-item:hover {
+            background: #3498db;
+        }
+
+        .menu-item.active {
+            background: #2980b9;
+        }
+
+        /* 內容區域 */
+        .content-area {
+            flex: 1;
+            background: white;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .page-header {
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* 模擬界面組件 */
+        .mockup-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mock-toolbar {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .mock-btn {
+            padding: 8px 16px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .mock-btn.primary {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .mock-btn.success {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .mock-btn.warning {
+            background: #ffc107;
+            color: #212529;
+            border-color: #ffc107;
+        }
+
+        .mock-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .mock-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .mock-table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+            color: #333;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .mock-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .mock-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .mock-form {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-input {
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .mock-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border-left: 4px solid #007bff;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #007bff;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .chart-placeholder {
+            height: 200px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .arrow.expanded {
+            transform: rotate(90deg);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .function-menu {
+                width: 100%;
+                max-height: 200px;
+            }
+            
+            .content-area {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 功能選單 -->
+        <div class="function-menu">
+            <div class="menu-title">🎯 前台管理功能</div>
+            
+            <div class="menu-category">
+                <div class="category-title" onclick="toggleCategory(this)">
+                    🎓 學生管理
+                    <span class="arrow">▶</span>
+                </div>
+                <div class="category-items">
+                    <div class="menu-item" onclick="showPage('student-list')">學生列表</div>
+                    <div class="menu-item" onclick="showPage('student-add')">新增學生</div>
+                    <div class="menu-item" onclick="showPage('student-import')">批量匯入</div>
+                    <div class="menu-item" onclick="showPage('student-analysis')">學生分析</div>
+                </div>
+            </div>
+
+            <div class="menu-category">
+                <div class="category-title" onclick="toggleCategory(this)">
+                    📊 成績管理
+                    <span class="arrow">▶</span>
+                </div>
+                <div class="category-items">
+                    <div class="menu-item" onclick="showPage('grade-input')">成績輸入</div>
+                    <div class="menu-item" onclick="showPage('grade-analysis')">成績分析</div>
+                    <div class="menu-item" onclick="showPage('exam-management')">考試管理</div>
+                    <div class="menu-item" onclick="showPage('report-cards')">成績單</div>
+                </div>
+            </div>
+
+            <div class="menu-category">
+                <div class="category-title" onclick="toggleCategory(this)">
+                    📅 出缺勤管理
+                    <span class="arrow">▶</span>
+                </div>
+                <div class="category-items">
+                    <div class="menu-item" onclick="showPage('daily-attendance')">今日點名</div>
+                    <div class="menu-item" onclick="showPage('attendance-history')">出席記錄</div>
+                    <div class="menu-item" onclick="showPage('leave-management')">請假管理</div>
+                    <div class="menu-item" onclick="showPage('makeup-classes')">補課安排</div>
+                </div>
+            </div>
+
+            <div class="menu-category">
+                <div class="category-title" onclick="toggleCategory(this)">
+                    💰 費用管理
+                    <span class="arrow">▶</span>
+                </div>
+                <div class="category-items">
+                    <div class="menu-item" onclick="showPage('payment-records')">繳費記錄</div>
+                    <div class="menu-item" onclick="showPage('refund-management')">退費管理</div>
+                    <div class="menu-item" onclick="showPage('scholarships')">獎學金</div>
+                    <div class="menu-item" onclick="showPage('financial-reports')">財務報表</div>
+                </div>
+            </div>
+
+            <div class="menu-category">
+                <div class="category-title" onclick="toggleCategory(this)">
+                    📚 課程管理
+                    <span class="arrow">▶</span>
+                </div>
+                <div class="category-items">
+                    <div class="menu-item" onclick="showPage('course-setup')">課程設定</div>
+                    <div class="menu-item" onclick="showPage('scheduling')">排課系統</div>
+                    <div class="menu-item" onclick="showPage('course-materials')">教材管理</div>
+                    <div class="menu-item" onclick="showPage('progress-tracking')">進度追蹤</div>
+                </div>
+            </div>
+
+            <div class="menu-category">
+                <div class="category-title" onclick="toggleCategory(this)">
+                    🎯 招生管理
+                    <span class="arrow">▶</span>
+                </div>
+                <div class="category-items">
+                    <div class="menu-item" onclick="showPage('trial-classes')">試聽管理</div>
+                    <div class="menu-item" onclick="showPage('customer-tracking')">客戶追蹤</div>
+                    <div class="menu-item" onclick="showPage('conversion-analysis')">轉換分析</div>
+                    <div class="menu-item" onclick="showPage('referral-program')">推薦計畫</div>
+                </div>
+            </div>
+
+            <div class="menu-category">
+                <div class="category-title" onclick="toggleCategory(this)">
+                    👨‍🏫 教師管理
+                    <span class="arrow">▶</span>
+                </div>
+                <div class="category-items">
+                    <div class="menu-item" onclick="showPage('teacher-profiles')">教師檔案</div>
+                    <div class="menu-item" onclick="showPage('teacher-scheduling')">教師排班</div>
+                    <div class="menu-item" onclick="showPage('performance-evaluation')">績效評估</div>
+                    <div class="menu-item" onclick="showPage('salary-calculation')">薪資計算</div>
+                </div>
+            </div>
+
+            <div class="menu-category">
+                <div class="category-title" onclick="toggleCategory(this)">
+                    📢 通知公告
+                    <span class="arrow">▶</span>
+                </div>
+                <div class="category-items">
+                    <div class="menu-item" onclick="showPage('announcements')">公告管理</div>
+                    <div class="menu-item" onclick="showPage('notifications')">通知發送</div>
+                    <div class="menu-item" onclick="showPage('message-center')">訊息中心</div>
+                    <div class="menu-item" onclick="showPage('parent-communication')">家長聯絡</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 內容區域 -->
+        <div class="content-area" id="contentArea">
+            <div class="page-header">
+                <div class="page-title">🎯 前台管理功能頁面示意圖</div>
+                <div class="page-subtitle">點擊左側功能選單查看對應的頁面界面設計</div>
+            </div>
+            
+            <div class="mock-card">
+                <div class="card-title">📋 使用說明</div>
+                <p>這是補教系統前台管理的功能頁面示意圖。您可以：</p>
+                <ul style="margin: 15px 0; padding-left: 20px;">
+                    <li>點擊左側選單的各個功能分類</li>
+                    <li>查看每個功能頁面的界面佈局</li>
+                    <li>了解各種表單、表格和圖表的設計</li>
+                    <li>參考功能按鈕和操作流程的安排</li>
+                </ul>
+                <p>每個頁面都包含實際的界面元素和互動功能的模擬展示。</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 功能頁面配置
+        const pageConfigs = {
+            'student-list': {
+                title: '🎓 學生列表',
+                subtitle: '查看和管理所有學生資訊',
+                content: `
+                    <div class="mockup-section">
+                        <div class="section-title">🔍 搜尋和篩選</div>
+                        <div class="mock-toolbar">
+                            <input class="form-input" placeholder="搜尋學生姓名、學號" style="width: 200px;">
+                            <select class="form-input" style="width: 120px;">
+                                <option>所有班級</option>
+                                <option>國一甲班</option>
+                                <option>國二甲班</option>
+                            </select>
+                            <select class="form-input" style="width: 120px;">
+                                <option>所有狀態</option>
+                                <option>在學</option>
+                                <option>休學</option>
+                                <option>退學</option>
+                            </select>
+                            <button class="mock-btn primary">🔍 搜尋</button>
+                            <button class="mock-btn success">➕ 新增學生</button>
+                            <button class="mock-btn warning">📤 匯出Excel</button>
+                        </div>
+                    </div>
+
+                    <div class="mockup-section">
+                        <div class="section-title">👥 學生資料表</div>
+                        <table class="mock-table">
+                            <thead>
+                                <tr>
+                                    <th>學號</th>
+                                    <th>姓名</th>
+                                    <th>班級</th>
+                                    <th>聯絡電話</th>
+                                    <th>入學日期</th>
+                                    <th>狀態</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>S001</td>
+                                    <td>王小明</td>
+                                    <td>國二甲班</td>
+                                    <td>0912-345-678</td>
+                                    <td>2023-09-01</td>
+                                    <td><span class="status-badge status-active">在學</span></td>
+                                    <td>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">📝 編輯</button>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">👁️ 詳情</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>S002</td>
+                                    <td>李小華</td>
+                                    <td>國一甲班</td>
+                                    <td>0923-456-789</td>
+                                    <td>2023-09-01</td>
+                                    <td><span class="status-badge status-active">在學</span></td>
+                                    <td>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">📝 編輯</button>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">👁️ 詳情</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>S003</td>
+                                    <td>張小美</td>
+                                    <td>國三甲班</td>
+                                    <td>0934-567-890</td>
+                                    <td>2021-09-01</td>
+                                    <td><span class="status-badge status-pending">休學</span></td>
+                                    <td>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">📝 編輯</button>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">👁️ 詳情</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">156</div>
+                            <div class="stat-label">總學生數</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">12</div>
+                            <div class="stat-label">本月新增</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">3</div>
+                            <div class="stat-label">本月流失</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">95%</div>
+                            <div class="stat-label">在學率</div>
+                        </div>
+                    </div>
+                `
+            },
+            'student-add': {
+                title: '➕ 新增學生',
+                subtitle: '新增學生基本資料和報名課程',
+                content: `
+                    <div class="mockup-section">
+                        <div class="section-title">📝 學生基本資料</div>
+                        <div class="mock-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">學生姓名 *</label>
+                                    <input class="form-input" placeholder="請輸入學生姓名">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">身分證號 *</label>
+                                    <input class="form-input" placeholder="A123456789">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">出生日期 *</label>
+                                    <input class="form-input" type="date">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">就讀學校</label>
+                                    <input class="form-input" placeholder="XX國中">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">年級</label>
+                                    <select class="form-input">
+                                        <option>請選擇年級</option>
+                                        <option>國一</option>
+                                        <option>國二</option>
+                                        <option>國三</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">班級</label>
+                                    <select class="form-input">
+                                        <option>請選擇班級</option>
+                                        <option>甲班</option>
+                                        <option>乙班</option>
+                                        <option>丙班</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mockup-section">
+                        <div class="section-title">📞 聯絡資訊</div>
+                        <div class="mock-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">學生手機</label>
+                                    <input class="form-input" placeholder="0912-345-678">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">家長姓名 *</label>
+                                    <input class="form-input" placeholder="請輸入家長姓名">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">家長手機 *</label>
+                                    <input class="form-input" placeholder="0912-345-678">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">聯絡地址</label>
+                                    <input class="form-input" placeholder="請輸入地址">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">緊急聯絡人</label>
+                                    <input class="form-input" placeholder="請輸入緊急聯絡人">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">緊急聯絡電話</label>
+                                    <input class="form-input" placeholder="0912-345-678">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mockup-section">
+                        <div class="section-title">📚 報名課程</div>
+                        <div class="mock-form">
+                            <table class="mock-table">
+                                <thead>
+                                    <tr>
+                                        <th>選擇</th>
+                                        <th>科目</th>
+                                        <th>班級</th>
+                                        <th>上課時間</th>
+                                        <th>學費</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="checkbox" checked></td>
+                                        <td>數學</td>
+                                        <td>國二甲班</td>
+                                        <td>每週二、四 14:00-15:30</td>
+                                        <td>$8,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox"></td>
+                                        <td>英文</td>
+                                        <td>國二甲班</td>
+                                        <td>每週一、三 15:40-17:10</td>
+                                        <td>$7,500</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox"></td>
+                                        <td>理化</td>
+                                        <td>國二甲班</td>
+                                        <td>每週六 09:00-10:30</td>
+                                        <td>$6,500</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <div style="margin-top: 20px; text-align: right;">
+                                <div style="font-size: 1.2rem; font-weight: bold; color: #007bff;">
+                                    總學費：$8,000
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mock-toolbar" style="justify-content: flex-end;">
+                        <button class="mock-btn">取消</button>
+                        <button class="mock-btn primary">💾 儲存學生資料</button>
+                    </div>
+                `
+            },
+            'grade-input': {
+                title: '📝 成績輸入',
+                subtitle: '輸入和管理學生考試成績',
+                content: `
+                    <div class="mockup-section">
+                        <div class="section-title">🎯 選擇考試和班級</div>
+                        <div class="mock-toolbar">
+                            <select class="form-input" style="width: 150px;">
+                                <option>第一次段考</option>
+                                <option>第二次段考</option>
+                                <option>期末考</option>
+                            </select>
+                            <select class="form-input" style="width: 120px;">
+                                <option>國二甲班</option>
+                                <option>國二乙班</option>
+                                <option>國三甲班</option>
+                            </select>
+                            <select class="form-input" style="width: 100px;">
+                                <option>數學</option>
+                                <option>英文</option>
+                                <option>理化</option>
+                            </select>
+                            <button class="mock-btn primary">📋 載入成績單</button>
+                            <button class="mock-btn success">💾 批量儲存</button>
+                        </div>
+                    </div>
+
+                    <div class="mockup-section">
+                        <div class="section-title">📊 成績輸入表</div>
+                        <table class="mock-table">
+                            <thead>
+                                <tr>
+                                    <th>學號</th>
+                                    <th>姓名</th>
+                                    <th>平時成績(30%)</th>
+                                    <th>期中考(35%)</th>
+                                    <th>期末考(35%)</th>
+                                    <th>總成績</th>
+                                    <th>排名</th>
+                                    <th>備註</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>S001</td>
+                                    <td>王小明</td>
+                                    <td><input class="form-input" value="85" style="width: 60px;"></td>
+                                    <td><input class="form-input" value="92" style="width: 60px;"></td>
+                                    <td><input class="form-input" value="88" style="width: 60px;"></td>
+                                    <td style="font-weight: bold; color: #28a745;">88.5</td>
+                                    <td style="font-weight: bold; color: #007bff;">2</td>
+                                    <td><input class="form-input" placeholder="備註" style="width: 80px;"></td>
+                                </tr>
+                                <tr>
+                                    <td>S002</td>
+                                    <td>李小華</td>
+                                    <td><input class="form-input" value="78" style="width: 60px;"></td>
+                                    <td><input class="form-input" value="85" style="width: 60px;"></td>
+                                    <td><input class="form-input" value="82" style="width: 60px;"></td>
+                                    <td style="font-weight: bold; color: #28a745;">81.8</td>
+                                    <td style="font-weight: bold; color: #007bff;">5</td>
+                                    <td><input class="form-input" placeholder="備註" style="width: 80px;"></td>
+                                </tr>
+                                <tr>
+                                    <td>S003</td>
+                                    <td>張小美</td>
+                                    <td><input class="form-input" value="92" style="width: 60px;"></td>
+                                    <td><input class="form-input" value="95" style="width: 60px;"></td>
+                                    <td><input class="form-input" value="90" style="width: 60px;"></td>
+                                    <td style="font-weight: bold; color: #28a745;">92.1</td>
+                                    <td style="font-weight: bold; color: #007bff;">1</td>
+                                    <td><input class="form-input" placeholder="備註" style="width: 80px;"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">87.5</div>
+                            <div class="stat-label">班級平均</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">95</div>
+                            <div class="stat-label">最高分</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">65</div>
+                            <div class="stat-label">最低分</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">25</div>
+                            <div class="stat-label">已輸入人數</div>
+                        </div>
+                    </div>
+
+                    <div class="mock-card">
+                        <div class="card-title">📈 成績分析</div>
+                        <div class="chart-placeholder">
+                            📊 成績分布圖<br>
+                            <small>90分以上: 8人 | 80-89分: 12人 | 70-79分: 4人 | 60-69分: 1人</small>
+                        </div>
+                    </div>
+                `
+            },
+            'daily-attendance': {
+                title: '✅ 今日點名',
+                subtitle: '進行今日課程出缺勤點名',
+                content: `
+                    <div class="mockup-section">
+                        <div class="section-title">📅 課程選擇</div>
+                        <div class="mock-toolbar">
+                            <select class="form-input" style="width: 150px;">
+                                <option>國二甲班-數學</option>
+                                <option>國二乙班-英文</option>
+                                <option>國三甲班-理化</option>
+                            </select>
+                            <span style="margin: 0 15px; color: #666;">2024年1月15日 (週一) 14:00-15:30</span>
+                            <button class="mock-btn primary">🔄 重新整理</button>
+                            <button class="mock-btn success">💾 儲存點名</button>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">25</div>
+                            <div class="stat-label">應到人數</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">23</div>
+                            <div class="stat-label">實到人數</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">2</div>
+                            <div class="stat-label">缺席人數</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">92%</div>
+                            <div class="stat-label">出席率</div>
+                        </div>
+                    </div>
+
+                    <div class="mockup-section">
+                        <div class="section-title">👥 學生點名清單</div>
+                        <table class="mock-table">
+                            <thead>
+                                <tr>
+                                    <th>學號</th>
+                                    <th>姓名</th>
+                                    <th>出席狀況</th>
+                                    <th>遲到時間</th>
+                                    <th>請假原因</th>
+                                    <th>備註</th>
+                                    <th>快速操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="background: #e8f5e8;">
+                                    <td>S001</td>
+                                    <td>王小明</td>
+                                    <td>
+                                        <select class="form-input" style="width: 80px; background: #d4edda;">
+                                            <option selected>出席</option>
+                                            <option>遲到</option>
+                                            <option>早退</option>
+                                            <option>缺席</option>
+                                            <option>請假</option>
+                                        </select>
+                                    </td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td><input class="form-input" style="width: 100px;"></td>
+                                    <td>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">✅</button>
+                                    </td>
+                                </tr>
+                                <tr style="background: #fff3e0;">
+                                    <td>S002</td>
+                                    <td>李小華</td>
+                                    <td>
+                                        <select class="form-input" style="width: 80px; background: #fff3cd;">
+                                            <option>出席</option>
+                                            <option selected>遲到</option>
+                                            <option>早退</option>
+                                            <option>缺席</option>
+                                            <option>請假</option>
+                                        </select>
+                                    </td>
+                                    <td><input class="form-input" value="5分鐘" style="width: 70px;"></td>
+                                    <td>-</td>
+                                    <td><input class="form-input" style="width: 100px;"></td>
+                                    <td>
+                                        <button class="mock-btn warning" style="font-size: 0.8rem;">⏰</button>
+                                    </td>
+                                </tr>
+                                <tr style="background: #f8d7da;">
+                                    <td>S003</td>
+                                    <td>張小美</td>
+                                    <td>
+                                        <select class="form-input" style="width: 80px; background: #f8d7da;">
+                                            <option>出席</option>
+                                            <option>遲到</option>
+                                            <option>早退</option>
+                                            <option selected>缺席</option>
+                                            <option>請假</option>
+                                        </select>
+                                    </td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td><input class="form-input" placeholder="聯絡家長" style="width: 100px;"></td>
+                                    <td>
+                                        <button class="mock-btn" style="font-size: 0.8rem; background: #dc3545; color: white;">📞</button>
+                                    </td>
+                                </tr>
+                                <tr style="background: #d1ecf1;">
+                                    <td>S004</td>
+                                    <td>陳小強</td>
+                                    <td>
+                                        <select class="form-input" style="width: 80px; background: #d1ecf1;">
+                                            <option>出席</option>
+                                            <option>遲到</option>
+                                            <option>早退</option>
+                                            <option>缺席</option>
+                                            <option selected>請假</option>
+                                        </select>
+                                    </td>
+                                    <td>-</td>
+                                    <td><input class="form-input" value="生病" style="width: 70px;"></td>
+                                    <td><input class="form-input" value="已請假" style="width: 100px;"></td>
+                                    <td>
+                                        <button class="mock-btn" style="font-size: 0.8rem; background: #17a2b8; color: white;">📝</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mock-card">
+                        <div class="card-title">📊 出席統計</div>
+                        <div class="chart-placeholder">
+                            📊 本週出席率趨勢圖<br>
+                            <small>週一: 92% | 週二: 88% | 週三: 95% | 週四: 90% | 週五: 待點名</small>
+                        </div>
+                    </div>
+                `
+            },
+            'payment-records': {
+                title: '💰 繳費記錄',
+                subtitle: '查看和管理學生繳費狀況',
+                content: `
+                    <div class="mockup-section">
+                        <div class="section-title">🔍 篩選條件</div>
+                        <div class="mock-toolbar">
+                            <input class="form-input" placeholder="搜尋學生姓名" style="width: 150px;">
+                            <select class="form-input" style="width: 120px;">
+                                <option>所有狀態</option>
+                                <option>已繳費</option>
+                                <option>未繳費</option>
+                                <option>逾期</option>
+                            </select>
+                            <select class="form-input" style="width: 120px;">
+                                <option>2024年1月</option>
+                                <option>2023年12月</option>
+                                <option>2023年11月</option>
+                            </select>
+                            <button class="mock-btn primary">🔍 查詢</button>
+                            <button class="mock-btn success">💰 新增繳費</button>
+                            <button class="mock-btn warning">📤 匯出報表</button>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">$1,250,000</div>
+                            <div class="stat-label">本月收入</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">142</div>
+                            <div class="stat-label">已繳人數</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">8</div>
+                            <div class="stat-label">逾期未繳</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">95%</div>
+                            <div class="stat-label">繳費率</div>
+                        </div>
+                    </div>
+
+                    <div class="mockup-section">
+                        <div class="section-title">💳 繳費記錄表</div>
+                        <table class="mock-table">
+                            <thead>
+                                <tr>
+                                    <th>收據編號</th>
+                                    <th>學生姓名</th>
+                                    <th>繳費項目</th>
+                                    <th>應繳金額</th>
+                                    <th>實繳金額</th>
+                                    <th>繳費日期</th>
+                                    <th>狀態</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>R2024010001</td>
+                                    <td>王小明</td>
+                                    <td>1月份學費</td>
+                                    <td>$8,000</td>
+                                    <td>$8,000</td>
+                                    <td>2024-01-05</td>
+                                    <td><span class="status-badge status-completed">已繳清</span></td>
+                                    <td>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">🖨️ 列印</button>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">📧 發送</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>R2024010002</td>
+                                    <td>李小華</td>
+                                    <td>1月份學費</td>
+                                    <td>$7,500</td>
+                                    <td>$7,500</td>
+                                    <td>2024-01-08</td>
+                                    <td><span class="status-badge status-completed">已繳清</span></td>
+                                    <td>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">🖨️ 列印</button>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">📧 發送</button>
+                                    </td>
+                                </tr>
+                                <tr style="background: #fff3e0;">
+                                    <td>-</td>
+                                    <td>張小美</td>
+                                    <td>1月份學費</td>
+                                    <td>$8,500</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td><span class="status-badge status-pending">逾期3天</span></td>
+                                    <td>
+                                        <button class="mock-btn warning" style="font-size: 0.8rem;">📞 催繳</button>
+                                        <button class="mock-btn success" style="font-size: 0.8rem;">💰 繳費</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mock-card">
+                        <div class="card-title">📈 收入分析</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="chart-placeholder">
+                                📊 月收入趨勢<br>
+                                <small>近6個月收入變化</small>
+                            </div>
+                            <div class="chart-placeholder">
+                                🥧 收入結構圖<br>
+                                <small>學費 vs 教材費 vs 活動費</small>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            'course-setup': {
+                title: '📚 課程設定',
+                subtitle: '設定和管理課程基本資訊',
+                content: `
+                    <div class="mockup-section">
+                        <div class="section-title">➕ 新增課程</div>
+                        <div class="mock-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">課程名稱 *</label>
+                                    <input class="form-input" placeholder="例：國二數學進階班">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">科目 *</label>
+                                    <select class="form-input">
+                                        <option>請選擇科目</option>
+                                        <option>數學</option>
+                                        <option>英文</option>
+                                        <option>理化</option>
+                                        <option>國文</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">年級 *</label>
+                                    <select class="form-input">
+                                        <option>請選擇年級</option>
+                                        <option>國一</option>
+                                        <option>國二</option>
+                                        <option>國三</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">授課教師 *</label>
+                                    <select class="form-input">
+                                        <option>請選擇教師</option>
+                                        <option>王老師</option>
+                                        <option>李老師</option>
+                                        <option>張老師</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">教室 *</label>
+                                    <select class="form-input">
+                                        <option>請選擇教室</option>
+                                        <option>A101</option>
+                                        <option>A102</option>
+                                        <option>B101</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">課程容量 *</label>
+                                    <input class="form-input" placeholder="最多可容納學生數" type="number">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">學費 *</label>
+                                    <input class="form-input" placeholder="每月學費" type="number">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">教材費</label>
+                                    <input class="form-input" placeholder="每學期教材費" type="number">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">課程狀態</label>
+                                    <select class="form-input">
+                                        <option>開放報名</option>
+                                        <option>額滿</option>
+                                        <option>停止招生</option>
+                                        <option>已結束</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mockup-section">
+                        <div class="section-title">⏰ 上課時間設定</div>
+                        <div class="mock-form">
+                            <table class="mock-table">
+                                <thead>
+                                    <tr>
+                                        <th>星期</th>
+                                        <th>開始時間</th>
+                                        <th>結束時間</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <select class="form-input">
+                                                <option>星期二</option>
+                                                <option>星期一</option>
+                                                <option>星期三</option>
+                                                <option>星期四</option>
+                                                <option>星期五</option>
+                                                <option>星期六</option>
+                                                <option>星期日</option>
+                                            </select>
+                                        </td>
+                                        <td><input class="form-input" type="time" value="14:00"></td>
+                                        <td><input class="form-input" type="time" value="15:30"></td>
+                                        <td><button class="mock-btn" style="background: #dc3545; color: white;">🗑️</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <select class="form-input">
+                                                <option>星期四</option>
+                                                <option>星期一</option>
+                                                <option>星期二</option>
+                                                <option>星期三</option>
+                                                <option>星期五</option>
+                                                <option>星期六</option>
+                                                <option>星期日</option>
+                                            </select>
+                                        </td>
+                                        <td><input class="form-input" type="time" value="14:00"></td>
+                                        <td><input class="form-input" type="time" value="15:30"></td>
+                                        <td><button class="mock-btn" style="background: #dc3545; color: white;">🗑️</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <button class="mock-btn success" style="margin-top: 10px;">➕ 新增時段</button>
+                        </div>
+                    </div>
+
+                    <div class="mockup-section">
+                        <div class="section-title">📋 課程描述</div>
+                        <div class="mock-form">
+                            <div class="form-group">
+                                <label class="form-label">課程簡介</label>
+                                <textarea class="form-input" rows="3" placeholder="請輸入課程簡介"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">教學目標</label>
+                                <textarea class="form-input" rows="3" placeholder="請輸入教學目標"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">備註</label>
+                                <textarea class="form-input" rows="2" placeholder="其他備註事項"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mock-toolbar" style="justify-content: flex-end;">
+                        <button class="mock-btn">取消</button>
+                        <button class="mock-btn primary">💾 儲存課程</button>
+                    </div>
+
+                    <div class="mockup-section" style="margin-top: 40px;">
+                        <div class="section-title">📚 現有課程列表</div>
+                        <table class="mock-table">
+                            <thead>
+                                <tr>
+                                    <th>課程名稱</th>
+                                    <th>授課教師</th>
+                                    <th>上課時間</th>
+                                    <th>學生人數</th>
+                                    <th>容量</th>
+                                    <th>狀態</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>國二數學甲班</td>
+                                    <td>王老師</td>
+                                    <td>週二、四 14:00-15:30</td>
+                                    <td>25</td>
+                                    <td>30</td>
+                                    <td><span class="status-badge status-active">開放報名</span></td>
+                                    <td>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">📝 編輯</button>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">👥 學生</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>國三英文衝刺班</td>
+                                    <td>李老師</td>
+                                    <td>週六 09:00-12:00</td>
+                                    <td>30</td>
+                                    <td>30</td>
+                                    <td><span class="status-badge status-pending">額滿</span></td>
+                                    <td>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">📝 編輯</button>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">👥 學生</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `
+            },
+            'teacher-profiles': {
+                title: '👨‍🏫 教師檔案',
+                subtitle: '管理教師基本資料和教學資訊',
+                content: `
+                    <div class="mockup-section">
+                        <div class="section-title">🔍 教師搜尋</div>
+                        <div class="mock-toolbar">
+                            <input class="form-input" placeholder="搜尋教師姓名" style="width: 150px;">
+                            <select class="form-input" style="width: 120px;">
+                                <option>所有科目</option>
+                                <option>數學</option>
+                                <option>英文</option>
+                                <option>理化</option>
+                            </select>
+                            <select class="form-input" style="width: 120px;">
+                                <option>所有狀態</option>
+                                <option>在職</option>
+                                <option>留職停薪</option>
+                                <option>離職</option>
+                            </select>
+                            <button class="mock-btn primary">🔍 搜尋</button>
+                            <button class="mock-btn success">➕ 新增教師</button>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">12</div>
+                            <div class="stat-label">在職教師</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">8</div>
+                            <div class="stat-label">專任教師</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">4</div>
+                            <div class="stat-label">兼任教師</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">95%</div>
+                            <div class="stat-label">平均滿意度</div>
+                        </div>
+                    </div>
+
+                    <div class="mockup-section">
+                        <div class="section-title">👥 教師列表</div>
+                        <table class="mock-table">
+                            <thead>
+                                <tr>
+                                    <th>教師編號</th>
+                                    <th>姓名</th>
+                                    <th>任教科目</th>
+                                    <th>聯絡電話</th>
+                                    <th>到職日期</th>
+                                    <th>授課班級數</th>
+                                    <th>狀態</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>T001</td>
+                                    <td>王志明</td>
+                                    <td>數學、理化</td>
+                                    <td>0912-345-678</td>
+                                    <td>2020-09-01</td>
+                                    <td>6</td>
+                                    <td><span class="status-badge status-active">在職</span></td>
+                                    <td>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">📝 編輯</button>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">👁️ 詳情</button>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">📊 績效</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>T002</td>
+                                    <td>李美華</td>
+                                    <td>英文</td>
+                                    <td>0923-456-789</td>
+                                    <td>2019-03-15</td>
+                                    <td>4</td>
+                                    <td><span class="status-badge status-active">在職</span></td>
+                                    <td>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">📝 編輯</button>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">👁️ 詳情</button>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">📊 績效</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>T003</td>
+                                    <td>張文傑</td>
+                                    <td>國文</td>
+                                    <td>0934-567-890</td>
+                                    <td>2021-08-01</td>
+                                    <td>3</td>
+                                    <td><span class="status-badge status-active">在職</span></td>
+                                    <td>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">📝 編輯</button>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">👁️ 詳情</button>
+                                        <button class="mock-btn" style="font-size: 0.8rem;">📊 績效</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mockup-section">
+                        <div class="section-title">📝 教師檔案詳情</div>
+                        <div class="mock-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">教師姓名 *</label>
+                                    <input class="form-input" value="王志明">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">身分證號 *</label>
+                                    <input class="form-input" value="A123456789">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">出生日期 *</label>
+                                    <input class="form-input" type="date" value="1985-06-15">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">聯絡電話 *</label>
+                                    <input class="form-input" value="0912-345-678">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input class="form-input" value="wang@example.com">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">緊急聯絡人</label>
+                                    <input class="form-input" value="王太太">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">最高學歷</label>
+                                    <input class="form-input" value="國立台灣大學數學系碩士">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">教學年資</label>
+                                    <input class="form-input" value="8年">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">專長科目</label>
+                                    <input class="form-input" value="數學、理化">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mock-card">
+                        <div class="card-title">📈 教學績效分析</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="chart-placeholder">
+                                📊 學生成績提升率<br>
+                                <small>各班級平均成績變化</small>
+                            </div>
+                            <div class="chart-placeholder">
+                                ⭐ 教學滿意度評分<br>
+                                <small>學生對教師的評價分數</small>
+                            </div>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // 展開/收合分類
+        function toggleCategory(categoryTitle) {
+            const arrow = categoryTitle.querySelector('.arrow');
+            const items = categoryTitle.nextElementSibling;
+            
+            arrow.classList.toggle('expanded');
+            items.classList.toggle('expanded');
+        }
+
+        // 顯示頁面
+        function showPage(pageId) {
+            const config = pageConfigs[pageId];
+            if (!config) {
+                alert('此功能頁面尚未完成');
+                return;
+            }
+
+            // 更新頁面標題
+            const contentArea = document.getElementById('contentArea');
+            contentArea.innerHTML = `
+                <div class="page-header">
+                    <div class="page-title">${config.title}</div>
+                    <div class="page-subtitle">${config.subtitle}</div>
+                </div>
+                ${config.content}
+            `;
+
+            // 更新選中狀態
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // 初始化時展開第一個分類
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstCategory = document.querySelector('.category-title');
+            if (firstCategory) {
+                toggleCategory(firstCategory);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>補教機構系統架構視圖</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .architecture {
+            display: grid;
+            grid-template-rows: auto auto auto;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .layer {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .layer:hover {
+            transform: translateY(-5px);
+        }
+
+        .layer-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .layer-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+
+        .layer-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .layer-subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            margin-left: auto;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .module {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 4px solid #007bff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .module:hover {
+            background: #e9ecef;
+            border-left-color: #0056b3;
+            transform: scale(1.02);
+        }
+
+        .module-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .module-icon {
+            margin-right: 8px;
+        }
+
+        .module-functions {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .function-count {
+            background: #007bff;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-left: auto;
+        }
+
+        /* 不同層級的配色 */
+        .marketing-layer {
+            border-top: 5px solid #28a745;
+        }
+
+        .marketing-layer .module {
+            border-left-color: #28a745;
+        }
+
+        .marketing-layer .module:hover {
+            border-left-color: #1e7e34;
+        }
+
+        .business-layer {
+            border-top: 5px solid #007bff;
+        }
+
+        .business-layer .module {
+            border-left-color: #007bff;
+        }
+
+        .business-layer .module:hover {
+            border-left-color: #0056b3;
+        }
+
+        .admin-layer {
+            border-top: 5px solid #dc3545;
+        }
+
+        .admin-layer .module {
+            border-left-color: #dc3545;
+        }
+
+        .admin-layer .module:hover {
+            border-left-color: #c82333;
+        }
+
+        .user-roles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .role-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .role-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .role-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .role-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .role-access {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .function-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .function-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        .function-list li:before {
+            content: "✅";
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 補教機構智慧管理系統</h1>
+            <p>三層架構 × 10大模組 × 200+功能</p>
+        </div>
+
+        <div class="architecture">
+            <!-- 對外官網層 -->
+            <div class="layer marketing-layer">
+                <div class="layer-header">
+                    <div class="layer-icon">🌐</div>
+                    <div>
+                        <div class="layer-title">對外官網 (Marketing Site)</div>
+                        <div style="font-size: 0.9rem; color: #666; margin-top: 5px;">招生轉換 • 品牌建立 • 信任展示</div>
+                    </div>
+                    <div class="layer-subtitle">訪客 + 潛在客戶</div>
+                </div>
+                <div class="modules-grid">
+                    <div class="module" onclick="showModal('marketing1')">
+                        <div class="module-name">
+                            <span class="module-icon">📝</span>
+                            線上報名系統
+                            <span class="function-count">15項</span>
+                        </div>
+                        <div class="module-functions">課程選擇、資料填寫、試聽預約、費用計算、自動建檔</div>
+                    </div>
+                    <div class="module" onclick="showModal('marketing2')">
+                        <div class="module-name">
+                            <span class="module-icon">📚</span>
+                            課程展示系統
+                            <span class="function-count">12項</span>
+                        </div>
+                        <div class="module-functions">課程介紹、師資展示、時間表、收費標準、環境照片</div>
+                    </div>
+                    <div class="module" onclick="showModal('marketing3')">
+                        <div class="module-name">
+                            <span class="module-icon">🏆</span>
+                            成果展示系統
+                            <span class="function-count">10項</span>
+                        </div>
+                        <div class="module-functions">升學榜單、學習心得、家長推薦、進步案例、競賽得獎</div>
+                    </div>
+                    <div class="module" onclick="showModal('marketing4')">
+                        <div class="module-name">
+                            <span class="module-icon">💬</span>
+                            客服諮詢系統
+                            <span class="function-count">8項</span>
+                        </div>
+                        <div class="module-functions">線上客服、預約諮詢、常見問題、聯絡表單、即時回應</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 前台管理層 -->
+            <div class="layer business-layer">
+                <div class="layer-header">
+                    <div class="layer-icon">🎯</div>
+                    <div>
+                        <div class="layer-title">前台管理 (Business Operations)</div>
+                        <div style="font-size: 0.9rem; color: #666; margin-top: 5px;">教學管理 • 學務處理 • 日常營運</div>
+                    </div>
+                    <div class="layer-subtitle">老師 + 學生 + 行政</div>
+                </div>
+                <div class="modules-grid">
+                    <div class="module" onclick="showModal('business1')">
+                        <div class="module-name">
+                            <span class="module-icon">🎓</span>
+                            學生管理系統
+                            <span class="function-count">25項</span>
+                        </div>
+                        <div class="module-functions">學生資料、家長資訊、學習檔案、分班管理、狀態追蹤</div>
+                    </div>
+                    <div class="module" onclick="showModal('business2')">
+                        <div class="module-name">
+                            <span class="module-icon">📊</span>
+                            成績管理系統
+                            <span class="function-count">25項</span>
+                        </div>
+                        <div class="module-functions">考試管理、成績輸入、統計分析、預警通知、報表輸出</div>
+                    </div>
+                    <div class="module" onclick="showModal('business3')">
+                        <div class="module-name">
+                            <span class="module-icon">📅</span>
+                            出缺勤管理
+                            <span class="function-count">20項</span>
+                        </div>
+                        <div class="module-functions">線上點名、請假管理、出席統計、補課安排、家長通知</div>
+                    </div>
+                    <div class="module" onclick="showModal('business4')">
+                        <div class="module-name">
+                            <span class="module-icon">💰</span>
+                            費用管理系統
+                            <span class="function-count">24項</span>
+                        </div>
+                        <div class="module-functions">繳費通知、收費記錄、退費處理、獎學金、財務報表</div>
+                    </div>
+                    <div class="module" onclick="showModal('business5')">
+                        <div class="module-name">
+                            <span class="module-icon">📚</span>
+                            課程管理系統
+                            <span class="function-count">20項</span>
+                        </div>
+                        <div class="module-functions">課程設定、排課系統、選課管理、進度追蹤、教材管理</div>
+                    </div>
+                    <div class="module" onclick="showModal('business6')">
+                        <div class="module-name">
+                            <span class="module-icon">📢</span>
+                            通知公告系統
+                            <span class="function-count">16項</span>
+                        </div>
+                        <div class="module-functions">公告管理、多管道發送、互動回覆、閱讀追蹤、緊急通知</div>
+                    </div>
+                    <div class="module" onclick="showModal('business7')">
+                        <div class="module-name">
+                            <span class="module-icon">🎯</span>
+                            招生管理系統
+                            <span class="function-count">20項</span>
+                        </div>
+                        <div class="module-functions">客戶管理、試聽安排、轉換追蹤、推薦獎勵、效果分析</div>
+                    </div>
+                    <div class="module" onclick="showModal('business8')">
+                        <div class="module-name">
+                            <span class="module-icon">👨‍🏫</span>
+                            教師管理系統
+                            <span class="function-count">16項</span>
+                        </div>
+                        <div class="module-functions">教師資料、排班薪資、教學評量、資源共享、績效管理</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 後台管理層 -->
+            <div class="layer admin-layer">
+                <div class="layer-header">
+                    <div class="layer-icon">⚙️</div>
+                    <div>
+                        <div class="layer-title">後台管理 (System Administration)</div>
+                        <div style="font-size: 0.9rem; color: #666; margin-top: 5px;">系統維護 • 數據分析 • 安全管理</div>
+                    </div>
+                    <div class="layer-subtitle">系統管理員</div>
+                </div>
+                <div class="modules-grid">
+                    <div class="module" onclick="showModal('admin1')">
+                        <div class="module-name">
+                            <span class="module-icon">📊</span>
+                            數據分析系統
+                            <span class="function-count">16項</span>
+                        </div>
+                        <div class="module-functions">學習分析、營運報表、決策支援、趨勢預測、KPI監控</div>
+                    </div>
+                    <div class="module" onclick="showModal('admin2')">
+                        <div class="module-name">
+                            <span class="module-icon">⚙️</span>
+                            系統設定管理
+                            <span class="function-count">20項</span>
+                        </div>
+                        <div class="module-functions">權限管理、參數設定、資料維護、效能監控、安全稽核</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 用戶角色卡片 -->
+        <div class="user-roles">
+            <div class="role-card">
+                <div class="role-icon">👤</div>
+                <div class="role-name">訪客</div>
+                <div class="role-access">瀏覽 • 報名 • 諮詢</div>
+            </div>
+            <div class="role-card">
+                <div class="role-icon">🎓</div>
+                <div class="role-name">學生</div>
+                <div class="role-access">查詢成績 • 查看出勤 • 接收通知</div>
+            </div>
+            <div class="role-card">
+                <div class="role-icon">👨‍🏫</div>
+                <div class="role-name">教師</div>
+                <div class="role-access">教學管理 • 成績輸入 • 班級通知</div>
+            </div>
+            <div class="role-card">
+                <div class="role-icon">👨‍💼</div>
+                <div class="role-name">行政人員</div>
+                <div class="role-access">學務管理 • 招生處理 • 財務操作</div>
+            </div>
+            <div class="role-card">
+                <div class="role-icon">⚙️</div>
+                <div class="role-name">系統管理員</div>
+                <div class="role-access">系統設定 • 數據分析 • 安全管理</div>
+            </div>
+        </div>
+
+        <!-- 統計數據 -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">10</div>
+                <div class="stat-label">核心模組</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">200+</div>
+                <div class="stat-label">基礎功能</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">5</div>
+                <div class="stat-label">用戶角色</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">系統層級</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 功能詳情 Modal -->
+    <div id="functionModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // 模組功能詳細資料
+        const moduleDetails = {
+            // 對外官網
+            marketing1: {
+                title: "📝 線上報名系統",
+                functions: [
+                    "多步驟報名流程設計",
+                    "課程選擇與組合",
+                    "學生基本資料填寫",
+                    "家長聯絡資訊管理",
+                    "試聽時間預約",
+                    "費用方案選擇",
+                    "優惠折扣自動計算",
+                    "報名資料即時驗證",
+                    "重複報名檢查",
+                    "報名確認通知",
+                    "報名狀態追蹤",
+                    "報名資料匯出",
+                    "報名來源統計",
+                    "轉換率分析",
+                    "自動會員建檔"
+                ]
+            },
+            marketing2: {
+                title: "📚 課程展示系統",
+                functions: [
+                    "課程分類展示",
+                    "課程詳細介紹",
+                    "師資陣容介紹",
+                    "教學特色說明",
+                    "上課時間表",
+                    "收費標準展示",
+                    "教學環境照片",
+                    "設備介紹",
+                    "交通位置資訊",
+                    "課程比較表",
+                    "熱門課程推薦",
+                    "課程評價展示"
+                ]
+            },
+            marketing3: {
+                title: "🏆 成果展示系統",
+                functions: [
+                    "升學榜單管理",
+                    "學生學習心得",
+                    "家長推薦見證",
+                    "成績進步案例",
+                    "競賽得獎記錄",
+                    "教學成果影片",
+                    "媒體報導收集",
+                    "校友成就展示",
+                    "數據成果圖表",
+                    "成功故事分享"
+                ]
+            },
+            marketing4: {
+                title: "💬 客服諮詢系統",
+                functions: [
+                    "線上客服聊天",
+                    "預約諮詢服務",
+                    "常見問題FAQ",
+                    "聯絡表單",
+                    "客服工單系統",
+                    "即時回應機制",
+                    "客服滿意度調查",
+                    "諮詢記錄追蹤"
+                ]
+            },
+            // 前台管理
+            business1: {
+                title: "🎓 學生管理系統",
+                functions: [
+                    "新增學生資料",
+                    "修改學生基本資料",
+                    "學生照片上傳",
+                    "緊急聯絡人管理",
+                    "學生狀態管理",
+                    "學籍異動記錄",
+                    "學生分班管理",
+                    "家長基本資料",
+                    "多重聯絡方式",
+                    "家長偏好聯絡時間",
+                    "家長權限設定",
+                    "家長帳號綁定",
+                    "入學測驗記錄",
+                    "學習目標設定",
+                    "特殊需求註記",
+                    "學習風格分析",
+                    "個別化學習計畫",
+                    "多條件學生搜尋",
+                    "學生清單匯出",
+                    "生日提醒功能",
+                    "在學人數統計",
+                    "學生分布分析",
+                    "學習歷程檔案",
+                    "轉班升級處理",
+                    "畢業證明管理"
+                ]
+            },
+            business2: {
+                title: "📊 成績管理系統", 
+                functions: [
+                    "建立考試項目",
+                    "設定考試科目配分",
+                    "考試時間排程",
+                    "考卷模板設計",
+                    "考試範圍設定",
+                    "單筆成績輸入",
+                    "批次成績匯入",
+                    "成績修改審核",
+                    "特殊狀況處理",
+                    "成績覆核申請",
+                    "加權平均計算",
+                    "班級排名計算",
+                    "進步幅度分析",
+                    "科目強弱分析",
+                    "歷次考試趨勢",
+                    "個人成績查詢",
+                    "家長成績查詢",
+                    "班級成績統計",
+                    "科目成績分析",
+                    "成績單列印",
+                    "低分預警設定",
+                    "退步預警通知",
+                    "家長成績通知",
+                    "補救教學建議",
+                    "個別輔導安排"
+                ]
+            },
+            business3: {
+                title: "📅 出缺勤管理",
+                functions: [
+                    "線上點名介面",
+                    "快速點名功能",
+                    "補點名功能",
+                    "遲到早退記錄",
+                    "點名狀態修改",
+                    "學生線上請假",
+                    "家長代為請假",
+                    "請假類型分類",
+                    "請假證明上傳",
+                    "請假審核流程",
+                    "個人出席率統計",
+                    "班級出席率統計",
+                    "科目出席率比較",
+                    "缺課時數統計",
+                    "出席趨勢分析",
+                    "補課時段安排",
+                    "補課預約系統",
+                    "補課記錄追蹤",
+                    "曠課即時通知",
+                    "出席率低預警"
+                ]
+            },
+            business4: {
+                title: "💰 費用管理系統",
+                functions: [
+                    "繳費通知單生成",
+                    "多課程合併帳單",
+                    "分期付款方案",
+                    "繳費截止提醒",
+                    "逾期費用計算",
+                    "學費標準設定",
+                    "教材費管理",
+                    "餐費方案設定",
+                    "活動費用管理",
+                    "其他雜費項目",
+                    "現金收費記錄",
+                    "轉帳繳費確認",
+                    "信用卡刷卡記錄",
+                    "分期付款追蹤",
+                    "收據發票開立",
+                    "退費申請流程",
+                    "退費金額計算",
+                    "退費審核機制",
+                    "優惠方案設定",
+                    "兄弟姊妹優惠",
+                    "推薦獎勵計算",
+                    "績優獎學金",
+                    "每日收入統計",
+                    "欠費學生清單"
+                ]
+            },
+            business5: {
+                title: "📚 課程管理系統",
+                functions: [
+                    "課程基本資料設定",
+                    "課程分類管理",
+                    "課程費用設定",
+                    "課程容量管理",
+                    "課程狀態控制",
+                    "教師排課安排",
+                    "教室分配管理",
+                    "時段衝突檢查",
+                    "課表自動生成",
+                    "課表調整功能",
+                    "學生選課申請",
+                    "選課資格檢查",
+                    "選課人數控制",
+                    "候補機制",
+                    "退選處理",
+                    "教學進度規劃",
+                    "課程內容記錄",
+                    "教材使用追蹤",
+                    "代課老師安排",
+                    "調課申請流程"
+                ]
+            },
+            business6: {
+                title: "📢 通知公告系統",
+                functions: [
+                    "公告內容編輯",
+                    "公告分類管理", 
+                    "公告對象設定",
+                    "公告時效設定",
+                    "緊急公告標記",
+                    "即時發送",
+                    "定時發送",
+                    "多管道發送",
+                    "發送狀態追蹤",
+                    "發送失敗重試",
+                    "公告留言回覆",
+                    "公告按讚功能",
+                    "閱讀狀態追蹤",
+                    "重要公告確認",
+                    "成績公布通知",
+                    "繳費提醒通知"
+                ]
+            },
+            business7: {
+                title: "🎯 招生管理系統",
+                functions: [
+                    "諮詢客戶建檔",
+                    "諮詢來源記錄",
+                    "客戶需求分析",
+                    "追蹤進度管理",
+                    "客戶分級標記",
+                    "試聽課程安排",
+                    "試聽時間預約",
+                    "試聽出席確認",
+                    "試聽效果評估",
+                    "試聽後追蹤",
+                    "線上報名表單",
+                    "報名資格審查",
+                    "報名確認通知",
+                    "入學測驗安排",
+                    "諮詢轉試聽率",
+                    "試聽轉報名率",
+                    "推薦人記錄",
+                    "推薦獎勵計算",
+                    "獎勵發放管理",
+                    "推薦效果統計"
+                ]
+            },
+            business8: {
+                title: "👨‍🏫 教師管理系統",
+                functions: [
+                    "教師個人資料",
+                    "教學專長記錄",
+                    "教學經歷管理",
+                    "證照資格記錄",
+                    "聯絡資訊管理",
+                    "教師排班管理",
+                    "代課安排",
+                    "授課時數統計",
+                    "薪資計算",
+                    "加班費計算",
+                    "學生評師問卷",
+                    "教學觀摩記錄",
+                    "教學成效分析",
+                    "教材共享平台",
+                    "教案管理",
+                    "進修課程記錄"
+                ]
+            },
+            // 後台管理
+            admin1: {
+                title: "📊 數據分析系統",
+                functions: [
+                    "學生學習進度報告",
+                    "成績趨勢分析",
+                    "科目能力雷達圖",
+                    "班級比較分析",
+                    "個人學習建議",
+                    "招生成效統計",
+                    "收入分析報告",
+                    "出席率統計",
+                    "師資利用率",
+                    "教室使用率",
+                    "月學習報告",
+                    "期末總結報告",
+                    "課程熱門度分析",
+                    "教師績效比較",
+                    "學生流失分析",
+                    "市場趨勢報告"
+                ]
+            },
+            admin2: {
+                title: "⚙️ 系統設定管理",
+                functions: [
+                    "角色權限設定",
+                    "功能權限分配",
+                    "資料存取控制",
+                    "密碼政策管理",
+                    "帳號狀態管理",
+                    "學期年度設定",
+                    "上課時段設定",
+                    "假期行事曆",
+                    "評分標準設定",
+                    "通知範本設定",
+                    "資料備份",
+                    "資料還原",
+                    "資料匯入匯出",
+                    "操作日誌記錄",
+                    "登入日誌追蹤",
+                    "系統效能監控",
+                    "錯誤日誌分析",
+                    "安全性檢查",
+                    "系統參數調整",
+                    "版本更新管理"
+                ]
+            }
+        };
+
+        // Modal 控制
+        const modal = document.getElementById('functionModal');
+        const closeBtn = document.getElementsByClassName('close')[0];
+
+        function showModal(moduleId) {
+            const details = moduleDetails[moduleId];
+            if (details) {
+                document.getElementById('modalTitle').textContent = details.title;
+                
+                let content = '<ul class="function-list">';
+                details.functions.forEach(func => {
+                    content += `<li>${func}</li>`;
+                });
+                content += '</ul>';
+                
+                document.getElementById('modalContent').innerHTML = content;
+                modal.style.display = 'block';
+            }
+        }
+
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // 添加載入動畫
+        window.addEventListener('load', function() {
+            const modules = document.querySelectorAll('.module');
+            modules.forEach((module, index) => {
+                setTimeout(() => {
+                    module.style.opacity = '0';
+                    module.style.transform = 'translateY(20px)';
+                    module.style.transition = 'all 0.5s ease';
+                    setTimeout(() => {
+                        module.style.opacity = '1';
+                        module.style.transform = 'translateY(0)';
+                    }, 50);
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

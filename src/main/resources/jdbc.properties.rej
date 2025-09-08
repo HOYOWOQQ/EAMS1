@@ -1,0 +1,26 @@
+diff a/src/main/resources/jdbc.properties b/src/main/resources/jdbc.properties	(rejected hunks)
+@@ -1,23 +0,0 @@
+-# \u6539\u6210 Spring Boot \u7684\u6A19\u6E96\u5C6C\u6027\u540D\u7A31
+-spring.datasource.drivername=com.microsoft.sqlserver.jdbc.SQLServerDriver
+-spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=test;encrypt=true;trustServerCertificate=true
+-spring.datasource.username=chris
+-spring.datasource.password=zxcbbn5869
+-
+-# \u52A0\u4E0A JPA \u8A2D\u5B9A
+-spring.jpa.hibernate.ddl-auto=update
+-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.SQLServerDialect
+-
+-
+-spring.jpa.show-sql=false
+-spring.jpa.properties.hibernate.format_sql=false
+-logging.level.org.hibernate.SQL=off
+-logging.level.org.hibernate.type.descriptor.sql.BasicBinder=off
+-
+-
+-spring.mvc.view.prefix=/views/
+-spring.mvc.view.suffix=.jsp
+-
+-
+-
+-      
+\ No newline at end of file

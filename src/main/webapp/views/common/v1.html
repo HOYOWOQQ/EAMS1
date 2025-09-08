@@ -1,0 +1,2221 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系統功能畫面設計</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+            background: #f5f7fa;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .function-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 10px;
+            padding: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 2px;
+            font-size: 0.9rem;
+        }
+
+        .tab-btn.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .tab-btn:hover {
+            background: #e9ecef;
+        }
+
+        .tab-btn.active:hover {
+            background: #0056b3;
+        }
+
+        .function-view {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .function-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .mockup-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .mockup-header {
+            background: #343a40;
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .mockup-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .mockup-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .control-close { background: #ff5f56; }
+        .control-minimize { background: #ffbd2e; }
+        .control-maximize { background: #27ca3f; }
+
+        .mockup-content {
+            padding: 0;
+            min-height: 600px;
+        }
+
+        /* 左側選單樣式 */
+        .layout-with-sidebar {
+            display: flex;
+            min-height: 600px;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: #34495e;
+            text-align: center;
+            border-bottom: 1px solid #455a64;
+        }
+
+        .sidebar-menu {
+            padding: 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: #34495e;
+            color: white;
+            border-left-color: #3498db;
+        }
+
+        .menu-icon {
+            margin-right: 12px;
+            font-size: 1.2rem;
+        }
+
+        .main-content {
+            flex: 1;
+            background: #f8f9fa;
+            overflow-y: auto;
+        }
+
+        .content-header {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .content-body {
+            padding: 30px;
+        }
+
+        /* 卡片樣式 */
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* 表格樣式 */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .table th {
+            background: #f8f9fa;
+            color: #333;
+            font-weight: bold;
+            padding: 15px;
+            text-align: left;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* 表單樣式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        /* 統計卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #007bff;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        /* 狀態徽章 */
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        /* 搜尋和篩選 */
+        .search-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+        }
+
+        /* 分頁 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 20px;
+        }
+
+        .page-btn {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            background: white;
+            color: #007bff;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover,
+        .page-btn.active {
+            background: #007bff;
+            color: white;
+        }
+
+        /* 詳細資料面板 */
+        .detail-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .info-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .info-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: #666;
+        }
+
+        .info-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* 圖表佔位符 */
+        .chart-placeholder {
+            height: 300px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.1rem;
+            margin: 20px 0;
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .layout-with-sidebar {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .detail-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .function-tabs {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🖼️ 系統功能畫面設計</h1>
+            <p>實際使用界面展示 - 各功能模組最終呈現樣貌</p>
+        </div>
+
+        <div class="function-tabs">
+            <button class="tab-btn active" onclick="showFunction('student')">🎓 學生管理</button>
+            <button class="tab-btn" onclick="showFunction('grade')">📊 成績管理</button>
+            <button class="tab-btn" onclick="showFunction('attendance')">📅 出缺勤</button>
+            <button class="tab-btn" onclick="showFunction('finance')">💰 費用管理</button>
+            <button class="tab-btn" onclick="showFunction('course')">📚 課程管理</button>
+            <button class="tab-btn" onclick="showFunction('notice')">📢 通知公告</button>
+            <button class="tab-btn" onclick="showFunction('dashboard')">🏠 儀表板</button>
+        </div>
+
+        <!-- 學生管理畫面 -->
+        <div id="student" class="function-view active">
+            <div class="mockup-container">
+                <div class="mockup-header">
+                    <div class="mockup-title">🎓 學生管理系統</div>
+                    <div class="mockup-controls">
+                        <div class="control-dot control-close"></div>
+                        <div class="control-dot control-minimize"></div>
+                        <div class="control-dot control-maximize"></div>
+                    </div>
+                </div>
+                <div class="mockup-content">
+                    <div class="layout-with-sidebar">
+                        <div class="sidebar">
+                            <div class="sidebar-header">
+                                <h3>智慧校務系統</h3>
+                            </div>
+                            <div class="sidebar-menu">
+                                <a href="#" class="menu-item active">
+                                    <span class="menu-icon">🎓</span>
+                                    學生管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">📊</span>
+                                    成績管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">📅</span>
+                                    出缺勤管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">💰</span>
+                                    費用管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">📚</span>
+                                    課程管理
+                                </a>
+                            </div>
+                        </div>
+                        <div class="main-content">
+                            <div class="content-header">
+                                <div class="page-title">學生管理</div>
+                                <div class="header-actions">
+                                    <button class="btn btn-primary">➕ 新增學生</button>
+                                    <button class="btn btn-secondary">📤 匯出資料</button>
+                                </div>
+                            </div>
+                            <div class="content-body">
+                                <div class="stats-grid">
+                                    <div class="stat-card">
+                                        <div class="stat-number">156</div>
+                                        <div class="stat-label">總學生數</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-number">23</div>
+                                        <div class="stat-label">本月新增</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-number">8</div>
+                                        <div class="stat-label">請假中</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-number">95%</div>
+                                        <div class="stat-label">出席率</div>
+                                    </div>
+                                </div>
+
+                                <div class="search-bar">
+                                    <input type="text" class="search-input" placeholder="🔍 搜尋學生姓名、學號、班級...">
+                                    <select class="form-control" style="width: 150px;">
+                                        <option>全部班級</option>
+                                        <option>國一甲班</option>
+                                        <option>國一乙班</option>
+                                        <option>國二甲班</option>
+                                    </select>
+                                    <select class="form-control" style="width: 120px;">
+                                        <option>全部狀態</option>
+                                        <option>在學</option>
+                                        <option>休學</option>
+                                        <option>退學</option>
+                                    </select>
+                                    <button class="btn btn-primary">搜尋</button>
+                                </div>
+
+                                <div class="table-container">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>學號</th>
+                                                <th>姓名</th>
+                                                <th>班級</th>
+                                                <th>家長</th>
+                                                <th>聯絡電話</th>
+                                                <th>狀態</th>
+                                                <th>最後上課</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>2024001</td>
+                                                <td>👨‍🎓 王小明</td>
+                                                <td>國二甲班</td>
+                                                <td>王媽媽</td>
+                                                <td>09-1234-5678</td>
+                                                <td><span class="badge badge-success">在學</span></td>
+                                                <td>2024/01/15</td>
+                                                <td>
+                                                    <button class="btn btn-sm" style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; font-size: 0.8rem;">詳情</button>
+                                                    <button class="btn btn-sm" style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; font-size: 0.8rem;">編輯</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>2024002</td>
+                                                <td>👩‍🎓 李小華</td>
+                                                <td>國二甲班</td>
+                                                <td>李爸爸</td>
+                                                <td>09-2345-6789</td>
+                                                <td><span class="badge badge-success">在學</span></td>
+                                                <td>2024/01/15</td>
+                                                <td>
+                                                    <button class="btn btn-sm" style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; font-size: 0.8rem;">詳情</button>
+                                                    <button class="btn btn-sm" style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; font-size: 0.8rem;">編輯</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>2024003</td>
+                                                <td>👨‍🎓 陳小強</td>
+                                                <td>國一乙班</td>
+                                                <td>陳媽媽</td>
+                                                <td>09-3456-7890</td>
+                                                <td><span class="badge badge-warning">請假中</span></td>
+                                                <td>2024/01/12</td>
+                                                <td>
+                                                    <button class="btn btn-sm" style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; font-size: 0.8rem;">詳情</button>
+                                                    <button class="btn btn-sm" style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; font-size: 0.8rem;">編輯</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>2024004</td>
+                                                <td>👩‍🎓 張小美</td>
+                                                <td>國三甲班</td>
+                                                <td>張爸爸</td>
+                                                <td>09-4567-8901</td>
+                                                <td><span class="badge badge-success">在學</span></td>
+                                                <td>2024/01/15</td>
+                                                <td>
+                                                    <button class="btn btn-sm" style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; font-size: 0.8rem;">詳情</button>
+                                                    <button class="btn btn-sm" style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; font-size: 0.8rem;">編輯</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>2024005</td>
+                                                <td>👨‍🎓 林小偉</td>
+                                                <td>國二乙班</td>
+                                                <td>林媽媽</td>
+                                                <td>09-5678-9012</td>
+                                                <td><span class="badge badge-info">新生</span></td>
+                                                <td>2024/01/15</td>
+                                                <td>
+                                                    <button class="btn btn-sm" style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; font-size: 0.8rem;">詳情</button>
+                                                    <button class="btn btn-sm" style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; font-size: 0.8rem;">編輯</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="pagination">
+                                    <a href="#" class="page-btn">‹ 上一頁</a>
+                                    <a href="#" class="page-btn active">1</a>
+                                    <a href="#" class="page-btn">2</a>
+                                    <a href="#" class="page-btn">3</a>
+                                    <a href="#" class="page-btn">下一頁 ›</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 成績管理畫面 -->
+        <div id="grade" class="function-view">
+            <div class="mockup-container">
+                <div class="mockup-header">
+                    <div class="mockup-title">📊 成績管理系統</div>
+                    <div class="mockup-controls">
+                        <div class="control-dot control-close"></div>
+                        <div class="control-dot control-minimize"></div>
+                        <div class="control-dot control-maximize"></div>
+                    </div>
+                </div>
+                <div class="mockup-content">
+                    <div class="layout-with-sidebar">
+                        <div class="sidebar">
+                            <div class="sidebar-header">
+                                <h3>智慧校務系統</h3>
+                            </div>
+                            <div class="sidebar-menu">
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">🎓</span>
+                                    學生管理
+                                </a>
+                                <a href="#" class="menu-item active">
+                                    <span class="menu-icon">📊</span>
+                                    成績管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">📅</span>
+                                    出缺勤管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">💰</span>
+                                    費用管理
+                                </a>
+                            </div>
+                        </div>
+                        <div class="main-content">
+                            <div class="content-header">
+                                <div class="page-title">成績管理</div>
+                                <div class="header-actions">
+                                    <button class="btn btn-success">📥 匯入成績</button>
+                                    <button class="btn btn-primary">➕ 新增考試</button>
+                                </div>
+                            </div>
+                            <div class="content-body">
+                                <div class="card">
+                                    <div class="card-header">📋 考試列表</div>
+                                    <div class="card-body">
+                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                                            <select class="form-control" style="width: 150px;">
+                                                <option>2024年上學期</option>
+                                                <option>2024年下學期</option>
+                                            </select>
+                                            <select class="form-control" style="width: 120px;">
+                                                <option>全部班級</option>
+                                                <option>國二甲班</option>
+                                                <option>國二乙班</option>
+                                            </select>
+                                            <select class="form-control" style="width: 120px;">
+                                                <option>全部科目</option>
+                                                <option>數學</option>
+                                                <option>英文</option>
+                                                <option>國文</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="table-container">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>考試名稱</th>
+                                                        <th>科目</th>
+                                                        <th>班級</th>
+                                                        <th>考試日期</th>
+                                                        <th>滿分</th>
+                                                        <th>已批改</th>
+                                                        <th>平均分數</th>
+                                                        <th>操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>📝 第一次段考</td>
+                                                        <td>數學</td>
+                                                        <td>國二甲班</td>
+                                                        <td>2024/01/10</td>
+                                                        <td>100</td>
+                                                        <td><span class="badge badge-success">25/25</span></td>
+                                                        <td>78.5</td>
+                                                        <td>
+                                                            <button class="btn btn-sm" style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; font-size: 0.8rem;">詳情</button>
+                                                            <button class="btn btn-sm" style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; font-size: 0.8rem;">輸入</button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>📝 第一次段考</td>
+                                                        <td>英文</td>
+                                                        <td>國二甲班</td>
+                                                        <td>2024/01/11</td>
+                                                        <td>100</td>
+                                                        <td><span class="badge badge-warning">18/25</span></td>
+                                                        <td>82.3</td>
+                                                        <td>
+                                                            <button class="btn btn-sm" style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; font-size: 0.8rem;">詳情</button>
+                                                            <button class="btn btn-sm" style="background: #fff3e0; color: #f57c00; padding: 4px 8px; font-size: 0.8rem;">批改</button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>📝 小考測驗</td>
+                                                        <td>國文</td>
+                                                        <td>國二甲班</td>
+                                                        <td>2024/01/12</td>
+                                                        <td>50</td>
+                                                        <td><span class="badge badge-danger">0/25</span></td>
+                                                        <td>-</td>
+                                                        <td>
+                                                            <button class="btn btn-sm" style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; font-size: 0.8rem;">詳情</button>
+                                                            <button class="btn btn-sm" style="background: #fce4ec; color: #c2185b; padding: 4px 8px; font-size: 0.8rem;">待批</button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="detail-panel">
+                                    <div class="info-section">
+                                        <div class="info-title">📈 成績統計分析</div>
+                                        <div class="chart-placeholder">
+                                            📊 班級成績分布圖表
+                                            <br><small>（顯示各分數區間學生人數）</small>
+                                        </div>
+                                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center;">
+                                            <div style="background: #e8f5e8; padding: 15px; border-radius: 8px;">
+                                                <div style="font-size: 1.5rem; font-weight: bold; color: #2e7d32;">85.6</div>
+                                                <div style="color: #666;">班級平均</div>
+                                            </div>
+                                            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px;">
+                                                <div style="font-size: 1.5rem; font-weight: bold; color: #1976d2;">96</div>
+                                                <div style="color: #666;">最高分</div>
+                                            </div>
+                                            <div style="background: #fff3e0; padding: 15px; border-radius: 8px;">
+                                                <div style="font-size: 1.5rem; font-weight: bold; color: #f57c00;">68</div>
+                                                <div style="color: #666;">最低分</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-section">
+                                        <div class="info-title">🎯 成績預警名單</div>
+                                        <div style="space-y: 10px;">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #fff3cd; border-radius: 8px; margin-bottom: 10px;">
+                                                <div>
+                                                    <div style="font-weight: bold;">陳小強</div>
+                                                    <div style="font-size: 0.9rem; color: #666;">數學：45分 (不及格)</div>
+                                                </div>
+                                                <button class="btn" style="background: #ffc107; color: #212529; padding: 6px 12px; font-size: 0.8rem;">關懷</button>
+                                            </div>
+                                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f8d7da; border-radius: 8px; margin-bottom: 10px;">
+                                                <div>
+                                                    <div style="font-weight: bold;">李小華</div>
+                                                    <div style="font-size: 0.9rem; color: #666;">英文：38分 (嚴重落後)</div>
+                                                </div>
+                                                <button class="btn" style="background: #dc3545; color: white; padding: 6px 12px; font-size: 0.8rem;">輔導</button>
+                                            </div>
+                                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #d1ecf1; border-radius: 8px;">
+                                                <div>
+                                                    <div style="font-weight: bold;">王小明</div>
+                                                    <div style="font-size: 0.9rem; color: #666;">進步顯著 (+15分)</div>
+                                                </div>
+                                                <button class="btn" style="background: #17a2b8; color: white; padding: 6px 12px; font-size: 0.8rem;">鼓勵</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 出缺勤管理畫面 -->
+        <div id="attendance" class="function-view">
+            <div class="mockup-container">
+                <div class="mockup-header">
+                    <div class="mockup-title">📅 出缺勤管理系統</div>
+                    <div class="mockup-controls">
+                        <div class="control-dot control-close"></div>
+                        <div class="control-dot control-minimize"></div>
+                        <div class="control-dot control-maximize"></div>
+                    </div>
+                </div>
+                <div class="mockup-content">
+                    <div class="layout-with-sidebar">
+                        <div class="sidebar">
+                            <div class="sidebar-header">
+                                <h3>智慧校務系統</h3>
+                            </div>
+                            <div class="sidebar-menu">
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">🎓</span>
+                                    學生管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">📊</span>
+                                    成績管理
+                                </a>
+                                <a href="#" class="menu-item active">
+                                    <span class="menu-icon">📅</span>
+                                    出缺勤管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">💰</span>
+                                    費用管理
+                                </a>
+                            </div>
+                        </div>
+                        <div class="main-content">
+                            <div class="content-header">
+                                <div class="page-title">出缺勤管理</div>
+                                <div class="header-actions">
+                                    <button class="btn btn-success">✅ 今日點名</button>
+                                    <button class="btn btn-primary">📊 出席統計</button>
+                                </div>
+                            </div>
+                            <div class="content-body">
+                                <div class="card">
+                                    <div class="card-header">📅 今日課程點名 - 2024年1月15日 (週一)</div>
+                                    <div class="card-body">
+                                        <div style="display: flex; gap: 15px; margin-bottom: 20px; align-items: center;">
+                                            <select class="form-control" style="width: 150px;">
+                                                <option>國二甲班</option>
+                                                <option>國二乙班</option>
+                                                <option>國三甲班</option>
+                                            </select>
+                                            <select class="form-control" style="width: 150px;">
+                                                <option>數學課 (14:00-15:30)</option>
+                                                <option>英文課 (15:40-17:10)</option>
+                                                <option>理化課 (18:30-20:00)</option>
+                                            </select>
+                                            <button class="btn btn-primary">載入名單</button>
+                                            <div style="margin-left: auto; display: flex; gap: 10px;">
+                                                <button class="btn btn-success">✅ 全部出席</button>
+                                                <button class="btn btn-warning">💾 儲存點名</button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="table-container">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width: 60px;">#</th>
+                                                        <th>學號</th>
+                                                        <th>姓名</th>
+                                                        <th>出席狀態</th>
+                                                        <th>到課時間</th>
+                                                        <th>備註</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>1</td>
+                                                        <td>2024001</td>
+                                                        <td>👨‍🎓 王小明</td>
+                                                        <td>
+                                                            <select class="form-control" style="width: 100px; padding: 4px 8px;">
+                                                                <option selected>✅ 出席</option>
+                                                                <option>❌ 曠課</option>
+                                                                <option>🏥 病假</option>
+                                                                <option>📝 事假</option>
+                                                                <option>⏰ 遲到</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>13:58</td>
+                                                        <td>
+                                                            <input type="text" class="form-control" style="font-size: 0.9rem; padding: 4px 8px;" placeholder="備註...">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>2</td>
+                                                        <td>2024002</td>
+                                                        <td>👩‍🎓 李小華</td>
+                                                        <td>
+                                                            <select class="form-control" style="width: 100px; padding: 4px 8px;">
+                                                                <option selected>✅ 出席</option>
+                                                                <option>❌ 曠課</option>
+                                                                <option>🏥 病假</option>
+                                                                <option>📝 事假</option>
+                                                                <option>⏰ 遲到</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>14:05</td>
+                                                        <td>
+                                                            <input type="text" class="form-control" style="font-size: 0.9rem; padding: 4px 8px;" value="遲到5分鐘">
+                                                        </td>
+                                                    </tr>
+                                                    <tr style="background: #fff3cd;">
+                                                        <td>3</td>
+                                                        <td>2024003</td>
+                                                        <td>👨‍🎓 陳小強</td>
+                                                        <td>
+                                                            <select class="form-control" style="width: 100px; padding: 4px 8px;">
+                                                                <option>✅ 出席</option>
+                                                                <option>❌ 曠課</option>
+                                                                <option selected>🏥 病假</option>
+                                                                <option>📝 事假</option>
+                                                                <option>⏰ 遲到</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>-</td>
+                                                        <td>
+                                                            <input type="text" class="form-control" style="font-size: 0.9rem; padding: 4px 8px;" value="感冒發燒，已請假">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>4</td>
+                                                        <td>2024004</td>
+                                                        <td>👩‍🎓 張小美</td>
+                                                        <td>
+                                                            <select class="form-control" style="width: 100px; padding: 4px 8px;">
+                                                                <option selected>✅ 出席</option>
+                                                                <option>❌ 曠課</option>
+                                                                <option>🏥 病假</option>
+                                                                <option>📝 事假</option>
+                                                                <option>⏰ 遲到</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>13:55</td>
+                                                        <td>
+                                                            <input type="text" class="form-control" style="font-size: 0.9rem; padding: 4px 8px;" placeholder="備註...">
+                                                        </td>
+                                                    </tr>
+                                                    <tr style="background: #f8d7da;">
+                                                        <td>5</td>
+                                                        <td>2024005</td>
+                                                        <td>👨‍🎓 林小偉</td>
+                                                        <td>
+                                                            <select class="form-control" style="width: 100px; padding: 4px 8px;">
+                                                                <option>✅ 出席</option>
+                                                                <option selected>❌ 曠課</option>
+                                                                <option>🏥 病假</option>
+                                                                <option>📝 事假</option>
+                                                                <option>⏰ 遲到</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>-</td>
+                                                        <td>
+                                                            <input type="text" class="form-control" style="font-size: 0.9rem; padding: 4px 8px;" value="未請假缺席">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="detail-panel">
+                                    <div class="info-section">
+                                        <div class="info-title">📊 本週出席統計</div>
+                                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;">
+                                            <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; text-align: center;">
+                                                <div style="font-size: 1.5rem; font-weight: bold; color: #2e7d32;">95%</div>
+                                                <div style="color: #666;">整體出席率</div>
+                                            </div>
+                                            <div style="background: #fff3e0; padding: 15px; border-radius: 8px; text-align: center;">
+                                                <div style="font-size: 1.5rem; font-weight: bold; color: #f57c00;">8人</div>
+                                                <div style="color: #666;">請假人數</div>
+                                            </div>
+                                            <div style="background: #f8d7da; padding: 15px; border-radius: 8px; text-align: center;">
+                                                <div style="font-size: 1.5rem; font-weight: bold; color: #721c24;">3人</div>
+                                                <div style="color: #666;">曠課人數</div>
+                                            </div>
+                                            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; text-align: center;">
+                                                <div style="font-size: 1.5rem; font-weight: bold; color: #1976d2;">12人</div>
+                                                <div style="color: #666;">遲到人次</div>
+                                            </div>
+                                        </div>
+                                        <div class="chart-placeholder" style="height: 200px;">
+                                            📈 每日出席率趨勢圖
+                                        </div>
+                                    </div>
+
+                                    <div class="info-section">
+                                        <div class="info-title">⚠️ 出席異常警示</div>
+                                        <div>
+                                            <div style="padding: 12px; background: #f8d7da; border-radius: 8px; margin-bottom: 10px;">
+                                                <div style="font-weight: bold; color: #721c24;">🚨 林小偉</div>
+                                                <div style="font-size: 0.9rem; color: #666;">本週曠課3次，需要關懷</div>
+                                                <button class="btn" style="background: #dc3545; color: white; padding: 4px 12px; font-size: 0.8rem; margin-top: 8px;">聯絡家長</button>
+                                            </div>
+                                            <div style="padding: 12px; background: #fff3cd; border-radius: 8px; margin-bottom: 10px;">
+                                                <div style="font-weight: bold; color: #856404;">⚠️ 陳小強</div>
+                                                <div style="font-size: 0.9rem; color: #666;">連續請假3天，追蹤關心</div>
+                                                <button class="btn" style="background: #ffc107; color: #212529; padding: 4px 12px; font-size: 0.8rem; margin-top: 8px;">追蹤狀況</button>
+                                            </div>
+                                            <div style="padding: 12px; background: #d1ecf1; border-radius: 8px;">
+                                                <div style="font-weight: bold; color: #0c5460;">ℹ️ 李小華</div>
+                                                <div style="font-size: 0.9rem; color: #666;">本週遲到4次，提醒準時</div>
+                                                <button class="btn" style="background: #17a2b8; color: white; padding: 4px 12px; font-size: 0.8rem; margin-top: 8px;">發送提醒</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 費用管理畫面 -->
+        <div id="finance" class="function-view">
+            <div class="mockup-container">
+                <div class="mockup-header">
+                    <div class="mockup-title">💰 費用管理系統</div>
+                    <div class="mockup-controls">
+                        <div class="control-dot control-close"></div>
+                        <div class="control-dot control-minimize"></div>
+                        <div class="control-dot control-maximize"></div>
+                    </div>
+                </div>
+                <div class="mockup-content">
+                    <div class="layout-with-sidebar">
+                        <div class="sidebar">
+                            <div class="sidebar-header">
+                                <h3>智慧校務系統</h3>
+                            </div>
+                            <div class="sidebar-menu">
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">🎓</span>
+                                    學生管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">📊</span>
+                                    成績管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">📅</span>
+                                    出缺勤管理
+                                </a>
+                                <a href="#" class="menu-item active">
+                                    <span class="menu-icon">💰</span>
+                                    費用管理
+                                </a>
+                            </div>
+                        </div>
+                        <div class="main-content">
+                            <div class="content-header">
+                                <div class="page-title">費用管理</div>
+                                <div class="header-actions">
+                                    <button class="btn btn-success">💸 收費記錄</button>
+                                    <button class="btn btn-primary">📋 開立帳單</button>
+                                </div>
+                            </div>
+                            <div class="content-body">
+                                <div class="stats-grid">
+                                    <div class="stat-card" style="border-left-color: #28a745;">
+                                        <div class="stat-number" style="color: #28a745;">$1,250,000</div>
+                                        <div class="stat-label">本月收入</div>
+                                    </div>
+                                    <div class="stat-card" style="border-left-color: #ffc107;">
+                                        <div class="stat-number" style="color: #ffc107;">$185,000</div>
+                                        <div class="stat-label">未收款項</div>
+                                    </div>
+                                    <div class="stat-card" style="border-left-color: #dc3545;">
+                                        <div class="stat-number" style="color: #dc3545;">23</div>
+                                        <div class="stat-label">逾期帳單</div>
+                                    </div>
+                                    <div class="stat-card" style="border-left-color: #17a2b8;">
+                                        <div class="stat-number" style="color: #17a2b8;">$45,000</div>
+                                        <div class="stat-label">本月退費</div>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-header">💳 繳費狀況管理</div>
+                                    <div class="card-body">
+                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                                            <select class="form-control" style="width: 120px;">
+                                                <option>全部狀態</option>
+                                                <option>已繳費</option>
+                                                <option>未繳費</option>
+                                                <option>逾期</option>
+                                            </select>
+                                            <select class="form-control" style="width: 150px;">
+                                                <option>2024年1月</option>
+                                                <option>2024年2月</option>
+                                                <option>2024年3月</option>
+                                            </select>
+                                            <input type="text" class="form-control" placeholder="🔍 搜尋學生姓名..." style="width: 200px;">
+                                            <button class="btn btn-primary">搜尋</button>
+                                        </div>
+                                        
+                                        <div class="table-container">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>帳單編號</th>
+                                                        <th>學生</th>
+                                                        <th>課程</th>
+                                                        <th>應繳金額</th>
+                                                        <th>已繳金額</th>
+                                                        <th>繳費期限</th>
+                                                        <th>狀態</th>
+                                                        <th>操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>B202401001</td>
+                                                        <td>👨‍🎓 王小明</td>
+                                                        <td>數學+英文班</td>
+                                                        <td>$15,000</td>
+                                                        <td>$15,000</td>
+                                                        <td>2024/01/10</td>
+                                                        <td><span class="badge badge-success">已繳清</span></td>
+                                                        <td>
+                                                            <button class="btn btn-sm" style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; font-size: 0.8rem;">收據</button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>B202401002</td>
+                                                        <td>👩‍🎓 李小華</td>
+                                                        <td>全科班</td>
+                                                        <td>$18,000</td>
+                                                        <td>$10,000</td>
+                                                        <td>2024/01/15</td>
+                                                        <td><span class="badge badge-warning">部分繳費</span></td>
+                                                        <td>
+                                                            <button class="btn btn-sm" style="background: #fff3e0; color: #f57c00; padding: 4px 8px; font-size: 0.8rem;">催繳</button>
+                                                            <button class="btn btn-sm" style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; font-size: 0.8rem;">收款</button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr style="background: #fff3cd;">
+                                                        <td>B202401003</td>
+                                                        <td>👨‍🎓 陳小強</td>
+                                                        <td>數學班</td>
+                                                        <td>$8,000</td>
+                                                        <td>$0</td>
+                                                        <td>2024/01/05</td>
+                                                        <td><span class="badge badge-danger">逾期未繳</span></td>
+                                                        <td>
+                                                            <button class="btn btn-sm" style="background: #fce4ec; color: #c2185b; padding: 4px 8px; font-size: 0.8rem;">聯絡</button>
+                                                            <button class="btn btn-sm" style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; font-size: 0.8rem;">收款</button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>B202401004</td>
+                                                        <td>👩‍🎓 張小美</td>
+                                                        <td>英文+理化班</td>
+                                                        <td>$12,000</td>
+                                                        <td>$12,000</td>
+                                                        <td>2024/01/12</td>
+                                                        <td><span class="badge badge-success">已繳清</span></td>
+                                                        <td>
+                                                            <button class="btn btn-sm" style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; font-size: 0.8rem;">收據</button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>B202401005</td>
+                                                        <td>👨‍🎓 林小偉</td>
+                                                        <td>數學班</td>
+                                                        <td>$8,000</td>
+                                                        <td>$0</td>
+                                                        <td>2024/01/20</td>
+                                                        <td><span class="badge badge-info">待繳費</span></td>
+                                                        <td>
+                                                            <button class="btn btn-sm" style="background: #d1ecf1; color: #0c5460; padding: 4px 8px; font-size: 0.8rem;">提醒</button>
+                                                            <button class="btn btn-sm" style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; font-size: 0.8rem;">收款</button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="detail-panel">
+                                    <div class="info-section">
+                                        <div class="info-title">📊 收入統計圖表</div>
+                                        <div class="chart-placeholder">
+                                            📈 月收入趨勢圖
+                                            <br><small>（顯示過去12個月收入變化）</small>
+                                        </div>
+                                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px;">
+                                            <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; text-align: center;">
+                                                <div style="font-size: 1.2rem; font-weight: bold; color: #2e7d32;">92%</div>
+                                                <div style="color: #666;">收費率</div>
+                                            </div>
+                                            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; text-align: center;">
+                                                <div style="font-size: 1.2rem; font-weight: bold; color: #1976d2;">$12,500</div>
+                                                <div style="color: #666;">平均學費</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-section">
+                                        <div class="info-title">🎁 優惠與獎學金</div>
+                                        <div>
+                                            <div style="padding: 12px; background: #e8f5e8; border-radius: 8px; margin-bottom: 10px;">
+                                                <div style="font-weight: bold; color: #2e7d32;">🏆 績優獎學金</div>
+                                                <div style="font-size: 0.9rem; color: #666;">王小明 - $5,000 (成績優異)</div>
+                                                <div style="font-size: 0.9rem; color: #666;">張小美 - $3,000 (進步獎勵)</div>
+                                            </div>
+                                            <div style="padding: 12px; background: #fff3e0; border-radius: 8px; margin-bottom: 10px;">
+                                                <div style="font-weight: bold; color: #f57c00;">👨‍👩‍👧‍👦 兄弟姊妹優惠</div>
+                                                <div style="font-size: 0.9rem; color: #666;">李小華、李小強 - 9折優惠</div>
+                                                <div style="font-size: 0.9rem; color: #666;">陳小明、陳小美 - 9折優惠</div>
+                                            </div>
+                                            <div style="padding: 12px; background: #e3f2fd; border-radius: 8px;">
+                                                <div style="font-weight: bold; color: #1976d2;">🎯 推薦獎勵</div>
+                                                <div style="font-size: 0.9rem; color: #666;">王媽媽推薦成功 - $2,000</div>
+                                                <div style="font-size: 0.9rem; color: #666;">李爸爸推薦成功 - $2,000</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 課程管理畫面 -->
+        <div id="course" class="function-view">
+            <div class="mockup-container">
+                <div class="mockup-header">
+                    <div class="mockup-title">📚 課程管理系統</div>
+                    <div class="mockup-controls">
+                        <div class="control-dot control-close"></div>
+                        <div class="control-dot control-minimize"></div>
+                        <div class="control-dot control-maximize"></div>
+                    </div>
+                </div>
+                <div class="mockup-content">
+                    <div class="layout-with-sidebar">
+                        <div class="sidebar">
+                            <div class="sidebar-header">
+                                <h3>智慧校務系統</h3>
+                            </div>
+                            <div class="sidebar-menu">
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">🎓</span>
+                                    學生管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">📊</span>
+                                    成績管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">📅</span>
+                                    出缺勤管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">💰</span>
+                                    費用管理
+                                </a>
+                                <a href="#" class="menu-item active">
+                                    <span class="menu-icon">📚</span>
+                                    課程管理
+                                </a>
+                            </div>
+                        </div>
+                        <div class="main-content">
+                            <div class="content-header">
+                                <div class="page-title">課程管理</div>
+                                <div class="header-actions">
+                                    <button class="btn btn-success">🗓️ 排課系統</button>
+                                    <button class="btn btn-primary">➕ 新增課程</button>
+                                </div>
+                            </div>
+                            <div class="content-body">
+                                <div class="card">
+                                    <div class="card-header">📋 課程列表</div>
+                                    <div class="card-body">
+                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                                            <select class="form-control" style="width: 120px;">
+                                                <option>全部年級</option>
+                                                <option>國一</option>
+                                                <option>國二</option>
+                                                <option>國三</option>
+                                                <option>高一</option>
+                                            </select>
+                                            <select class="form-control" style="width: 120px;">
+                                                <option>全部科目</option>
+                                                <option>數學</option>
+                                                <option>英文</option>
+                                                <option>國文</option>
+                                                <option>理化</option>
+                                            </select>
+                                            <select class="form-control" style="width: 120px;">
+                                                <option>全部狀態</option>
+                                                <option>招生中</option>
+                                                <option>進行中</option>
+                                                <option>已結束</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="table-container">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>課程代碼</th>
+                                                        <th>課程名稱</th>
+                                                        <th>授課老師</th>
+                                                        <th>上課時間</th>
+                                                        <th>教室</th>
+                                                        <th>人數</th>
+                                                        <th>狀態</th>
+                                                        <th>操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>MAT2A01</td>
+                                                        <td>📐 國二數學甲班</td>
+                                                        <td>👨‍🏫 王老師</td>
+                                                        <td>週一、三 14:00-15:30</td>
+                                                        <td>A101</td>
+                                                        <td><span style="color: #28a745; font-weight: bold;">25/30</span></td>
+                                                        <td><span class="badge badge-success">進行中</span></td>
+                                                        <td>
+                                                            <button class="btn btn-sm" style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; font-size: 0.8rem;">詳情</button>
+                                                            <button class="btn btn-sm" style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; font-size: 0.8rem;">編輯</button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>ENG2A01</td>
+                                                        <td>🔤 國二英文甲班</td>
+                                                        <td>👩‍🏫 李老師</td>
+                                                        <td>週二、四 15:40-17:10</td>
+                                                        <td>B102</td>
+                                                        <td><span style="color: #ffc107; font-weight: bold;">20/25</span></td>
+                                                        <td><span class="badge badge-warning">招生中</span></td>
+                                                        <td>
+                                                            <button class="btn btn-sm" style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; font-size: 0.8rem;">詳情</button>
+                                                            <button class="btn btn-sm" style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; font-size: 0.8rem;">編輯</button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>PHY3A01</td>
+                                                        <td>⚗️ 國三理化進階班</td>
+                                                        <td>👨‍🏫 張老師</td>
+                                                        <td>週六 09:00-12:00</td>
+                                                        <td>實驗室</td>
+                                                        <td><span style="color: #dc3545; font-weight: bold;">30/30</span></td>
+                                                        <td><span class="badge badge-info">額滿</span></td>
+                                                        <td>
+                                                            <button class="btn btn-sm" style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; font-size: 0.8rem;">詳情</button>
+                                                            <button class="btn btn-sm" style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; font-size: 0.8rem;">編輯</button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>CHI1A01</td>
+                                                        <td>📝 國一國文基礎班</td>
+                                                        <td>👩‍🏫 陳老師</td>
+                                                        <td>週五 18:30-20:00</td>
+                                                        <td>C201</td>
+                                                        <td><span style="color: #28a745; font-weight: bold;">18/28</span></td>
+                                                        <td><span class="badge badge-warning">招生中</span></td>
+                                                        <td>
+                                                            <button class="btn btn-sm" style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; font-size: 0.8rem;">詳情</button>
+                                                            <button class="btn btn-sm" style="background: #e8f5e8; color: #2e7d32; padding: 4px 8px; font-size: 0.8rem;">編輯</button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="detail-panel">
+                                    <div class="info-section">
+                                        <div class="info-title">🗓️ 本週課表一覽</div>
+                                        <div style="overflow-x: auto;">
+                                            <table class="table" style="font-size: 0.9rem;">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width: 100px;">時段</th>
+                                                        <th>週一</th>
+                                                        <th>週二</th>
+                                                        <th>週三</th>
+                                                        <th>週四</th>
+                                                        <th>週五</th>
+                                                        <th>週六</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="font-weight: bold;">14:00-15:30</td>
+                                                        <td style="background: #e3f2fd; padding: 8px; border-radius: 4px;">
+                                                            <div style="font-weight: bold;">數學甲班</div>
+                                                            <div style="font-size: 0.8rem; color: #666;">王老師 A101</div>
+                                                        </td>
+                                                        <td style="background: #e8f5e8; padding: 8px; border-radius: 4px;">
+                                                            <div style="font-weight: bold;">英文甲班</div>
+                                                            <div style="font-size: 0.8rem; color: #666;">李老師 B102</div>
+                                                        </td>
+                                                        <td style="background: #e3f2fd; padding: 8px; border-radius: 4px;">
+                                                            <div style="font-weight: bold;">數學甲班</div>
+                                                            <div style="font-size: 0.8rem; color: #666;">王老師 A101</div>
+                                                        </td>
+                                                        <td style="background: #e8f5e8; padding: 8px; border-radius: 4px;">
+                                                            <div style="font-weight: bold;">英文甲班</div>
+                                                            <div style="font-size: 0.8rem; color: #666;">李老師 B102</div>
+                                                        </td>
+                                                        <td style="background: #fff3e0; padding: 8px; border-radius: 4px;">
+                                                            <div style="font-weight: bold;">國文基礎</div>
+                                                            <div style="font-size: 0.8rem; color: #666;">陳老師 C201</div>
+                                                        </td>
+                                                        <td style="background: #f3e5f5; padding: 8px; border-radius: 4px;">
+                                                            <div style="font-weight: bold;">理化進階</div>
+                                                            <div style="font-size: 0.8rem; color: #666;">張老師 實驗室</div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="font-weight: bold;">15:40-17:10</td>
+                                                        <td></td>
+                                                        <td style="background: #e8f5e8; padding: 8px; border-radius: 4px;">
+                                                            <div style="font-weight: bold;">英文乙班</div>
+                                                            <div style="font-size: 0.8rem; color: #666;">李老師 B103</div>
+                                                        </td>
+                                                        <td></td>
+                                                        <td style="background: #e8f5e8; padding: 8px; border-radius: 4px;">
+                                                            <div style="font-weight: bold;">英文乙班</div>
+                                                            <div style="font-size: 0.8rem; color: #666;">李老師 B103</div>
+                                                        </td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="font-weight: bold;">18:30-20:00</td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td style="background: #fff3e0; padding: 8px; border-radius: 4px;">
+                                                            <div style="font-weight: bold;">國文基礎</div>
+                                                            <div style="font-size: 0.8rem; color: #666;">陳老師 C201</div>
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-section">
+                                        <div class="info-title">📊 課程統計</div>
+                                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;">
+                                            <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; text-align: center;">
+                                                <div style="font-size: 1.5rem; font-weight: bold; color: #2e7d32;">15</div>
+                                                <div style="color: #666;">進行中課程</div>
+                                            </div>
+                                            <div style="background: #fff3e0; padding: 15px; border-radius: 8px; text-align: center;">
+                                                <div style="font-size: 1.5rem; font-weight: bold; color: #f57c00;">8</div>
+                                                <div style="color: #666;">招生中課程</div>
+                                            </div>
+                                            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; text-align: center;">
+                                                <div style="font-size: 1.5rem; font-weight: bold; color: #1976d2;">285</div>
+                                                <div style="color: #666;">總學生數</div>
+                                            </div>
+                                            <div style="background: #f8d7da; padding: 15px; border-radius: 8px; text-align: center;">
+                                                <div style="font-size: 1.5rem; font-weight: bold; color: #721c24;">92%</div>
+                                                <div style="color: #666;">平均滿班率</div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: bold; margin-bottom: 10px;">🔥 熱門課程排行</div>
+                                            <div style="padding: 8px; background: #f8f9fa; border-radius: 4px; margin-bottom: 5px;">
+                                                <div style="display: flex; justify-content: space-between;">
+                                                    <span>1. 國三理化進階班</span>
+                                                    <span style="color: #dc3545; font-weight: bold;">額滿</span>
+                                                </div>
+                                            </div>
+                                            <div style="padding: 8px; background: #f8f9fa; border-radius: 4px; margin-bottom: 5px;">
+                                                <div style="display: flex; justify-content: space-between;">
+                                                    <span>2. 國二數學甲班</span>
+                                                    <span style="color: #28a745; font-weight: bold;">83%</span>
+                                                </div>
+                                            </div>
+                                            <div style="padding: 8px; background: #f8f9fa; border-radius: 4px;">
+                                                <div style="display: flex; justify-content: space-between;">
+                                                    <span>3. 國二英文甲班</span>
+                                                    <span style="color: #ffc107; font-weight: bold;">80%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 通知公告畫面 -->
+        <div id="notice" class="function-view">
+            <div class="mockup-container">
+                <div class="mockup-header">
+                    <div class="mockup-title">📢 通知公告系統</div>
+                    <div class="mockup-controls">
+                        <div class="control-dot control-close"></div>
+                        <div class="control-dot control-minimize"></div>
+                        <div class="control-dot control-maximize"></div>
+                    </div>
+                </div>
+                <div class="mockup-content">
+                    <div class="layout-with-sidebar">
+                        <div class="sidebar">
+                            <div class="sidebar-header">
+                                <h3>智慧校務系統</h3>
+                            </div>
+                            <div class="sidebar-menu">
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">🎓</span>
+                                    學生管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">📊</span>
+                                    成績管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">📅</span>
+                                    出缺勤管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">💰</span>
+                                    費用管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">📚</span>
+                                    課程管理
+                                </a>
+                                <a href="#" class="menu-item active">
+                                    <span class="menu-icon">📢</span>
+                                    通知公告
+                                </a>
+                            </div>
+                        </div>
+                        <div class="main-content">
+                            <div class="content-header">
+                                <div class="page-title">通知公告</div>
+                                <div class="header-actions">
+                                    <button class="btn btn-success">📤 群發通知</button>
+                                    <button class="btn btn-primary">➕ 新增公告</button>
+                                </div>
+                            </div>
+                            <div class="content-body">
+                                <div class="detail-panel">
+                                    <div class="info-section">
+                                        <div class="info-title">📋 最新公告</div>
+                                        <div>
+                                            <div style="border: 2px solid #dc3545; border-radius: 10px; padding: 15px; margin-bottom: 15px; background: #fff5f5;">
+                                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                                    <div>
+                                                        <span style="background: #dc3545; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; margin-right: 10px;">🚨 緊急</span>
+                                                        <span style="font-weight: bold; color: #333;">明日停課通知</span>
+                                                    </div>
+                                                    <div style="font-size: 0.9rem; color: #666;">2024/01/15 14:30</div>
+                                                </div>
+                                                <div style="color: #666; margin-bottom: 10px;">
+                                                    由於颱風來襲，明日(1/16)全天課程暫停，已繳費學生將自動安排補課時間...
+                                                </div>
+                                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                    <div style="font-size: 0.9rem; color: #666;">👨‍🏫 王主任發布 | 對象：全體師生</div>
+                                                    <div style="display: flex; gap: 5px;">
+                                                        <span style="background: #e8f5e8; color: #2e7d32; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">已讀 156</span>
+                                                        <span style="background: #d1ecf1; color: #0c5460; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">回覆 15</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-section">
+                                        <div class="info-title">📊 發送統計</div>
+                                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;">
+                                            <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; text-align: center;">
+                                                <div style="font-size: 1.5rem; font-weight: bold; color: #2e7d32;">95%</div>
+                                                <div style="color: #666;">平均閱讀率</div>
+                                            </div>
+                                            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; text-align: center;">
+                                                <div style="font-size: 1.5rem; font-weight: bold; color: #1976d2;">156</div>
+                                                <div style="color: #666;">本週發送</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <div style="font-weight: bold; margin-bottom: 10px;">📱 發送管道統計</div>
+                                            <div style="space-y: 8px;">
+                                                <div style="display: flex; justify-content: space-between; padding: 8px; background: #f8f9fa; border-radius: 4px; margin-bottom: 5px;">
+                                                    <span>🖥️ 系統通知</span>
+                                                    <span style="font-weight: bold;">100%</span>
+                                                </div>
+                                                <div style="display: flex; justify-content: space-between; padding: 8px; background: #f8f9fa; border-radius: 4px; margin-bottom: 5px;">
+                                                    <span>📧 Email</span>
+                                                    <span style="font-weight: bold;">85%</span>
+                                                </div>
+                                                <div style="display: flex; justify-content: space-between; padding: 8px; background: #f8f9fa; border-radius: 4px; margin-bottom: 5px;">
+                                                    <span>📱 簡訊</span>
+                                                    <span style="font-weight: bold;">78%</span>
+                                                </div>
+                                                <div style="display: flex; justify-content: space-between; padding: 8px; background: #f8f9fa; border-radius: 4px;">
+                                                    <span>💬 LINE</span>
+                                                    <span style="font-weight: bold;">92%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-header">📝 公告管理</div>
+                                    <div class="card-body">
+                                        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                                            <select class="form-control" style="width: 120px;">
+                                                <option>全部類型</option>
+                                                <option>緊急通知</option>
+                                                <option>重要公告</option>
+                                                <option>一般通知</option>
+                                                <option>活動公告</option>
+                                            </select>
+                                            <select class="form-control" style="width: 120px;">
+                                                <option>全部對象</option>
+                                                <option>全體師生</option>
+                                                <option>特定班級</option>
+                                                <option>特定學生</option>
+                                            </select>
+                                            <input type="text" class="form-control" placeholder="🔍 搜尋公告標題..." style="width: 200px;">
+                                        </div>
+                                        
+                                        <div class="table-container">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>類型</th>
+                                                        <th>標題</th>
+                                                        <th>發布者</th>
+                                                        <th>發布時間</th>
+                                                        <th>對象</th>
+                                                        <th>閱讀率</th>
+                                                        <th>狀態</th>
+                                                        <th>操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><span class="badge badge-danger">🚨 緊急</span></td>
+                                                        <td>明日停課通知</td>
+                                                        <td>👨‍🏫 王主任</td>
+                                                        <td>2024/01/15 14:30</td>
+                                                        <td>全體師生</td>
+                                                        <td><span style="color: #28a745; font-weight: bold;">100%</span></td>
+                                                        <td><span class="badge badge-success">已發送</span></td>
+                                                        <td>
+                                                            <button class="btn btn-sm" style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; font-size: 0.8rem;">詳情</button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><span class="badge badge-warning">📅 重要</span></td>
+                                                        <td>第一次段考時間公告</td>
+                                                        <td>👩‍🏫 李老師</td>
+                                                        <td>2024/01/12 09:00</td>
+                                                        <td>國二甲班</td>
+                                                        <td><span style="color: #28a745; font-weight: bold;">96%</span></td>
+                                                        <td><span class="badge badge-success">已發送</span></td>
+                                                        <td>
+                                                            <button class="btn btn-sm" style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; font-size: 0.8rem;">詳情</button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><span class="badge badge-success">🎉 活動</span></td>
+                                                        <td>寒假營隊報名開始</td>
+                                                        <td>👨‍💼 招生組</td>
+                                                        <td>2024/01/10 16:20</td>
+                                                        <td>全體學生</td>
+                                                        <td><span style="color: #ffc107; font-weight: bold;">78%</span></td>
+                                                        <td><span class="badge badge-success">已發送</span></td>
+                                                        <td>
+                                                            <button class="btn btn-sm" style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; font-size: 0.8rem;">詳情</button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 儀表板畫面 -->
+        <div id="dashboard" class="function-view">
+            <div class="mockup-container">
+                <div class="mockup-header">
+                    <div class="mockup-title">🏠 系統儀表板</div>
+                    <div class="mockup-controls">
+                        <div class="control-dot control-close"></div>
+                        <div class="control-dot control-minimize"></div>
+                        <div class="control-dot control-maximize"></div>
+                    </div>
+                </div>
+                <div class="mockup-content">
+                    <div class="layout-with-sidebar">
+                        <div class="sidebar">
+                            <div class="sidebar-header">
+                                <h3>智慧校務系統</h3>
+                            </div>
+                            <div class="sidebar-menu">
+                                <a href="#" class="menu-item active">
+                                    <span class="menu-icon">🏠</span>
+                                    儀表板
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">🎓</span>
+                                    學生管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">📊</span>
+                                    成績管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">📅</span>
+                                    出缺勤管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">💰</span>
+                                    費用管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">📚</span>
+                                    課程管理
+                                </a>
+                                <a href="#" class="menu-item">
+                                    <span class="menu-icon">📢</span>
+                                    通知公告
+                                </a>
+                            </div>
+                        </div>
+                        <div class="main-content">
+                            <div class="content-header">
+                                <div class="page-title">系統儀表板</div>
+                                <div class="header-actions">
+                                    <div style="display: flex; align-items: center; gap: 15px; color: #666;">
+                                        <span>👋 歡迎回來，王老師</span>
+                                        <span>📅 2024年1月15日 週一</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content-body">
+                                <div class="stats-grid">
+                                    <div class="stat-card" style="border-left-color: #007bff;">
+                                        <div class="stat-number" style="color: #007bff;">156</div>
+                                        <div class="stat-label">總學生數</div>
+                                    </div>
+                                    <div class="stat-card" style="border-left-color: #28a745;">
+                                        <div class="stat-number" style="color: #28a745;">95%</div>
+                                        <div class="stat-label">今日出席率</div>
+                                    </div>
+                                    <div class="stat-card" style="border-left-color: #ffc107;">
+                                        <div class="stat-number" style="color: #ffc107;">23</div>
+                                        <div class="stat-label">待批改作業</div>
+                                    </div>
+                                    <div class="stat-card" style="border-left-color: #dc3545;">
+                                        <div class="stat-number" style="color: #dc3545;">8</div>
+                                        <div class="stat-label">逾期繳費</div>
+                                    </div>
+                                </div>
+
+                                <div class="detail-panel">
+                                    <div class="info-section">
+                                        <div class="info-title">📅 今日課程安排</div>
+                                        <div>
+                                            <div style="padding: 15px; border-left: 4px solid #007bff; background: #f8f9fa; border-radius: 8px; margin-bottom: 10px;">
+                                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                    <div>
+                                                        <div style="font-weight: bold; color: #333;">📐 國二數學甲班</div>
+                                                        <div style="font-size: 0.9rem; color: #666;">A101教室 | 25位學生</div>
+                                                    </div>
+                                                    <div style="text-align: right;">
+                                                        <div style="font-weight: bold; color: #007bff;">14:00-15:30</div>
+                                                        <span class="badge badge-success">進行中</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div style="padding: 15px; border-left: 4px solid #28a745; background: #f8f9fa; border-radius: 8px; margin-bottom: 10px;">
+                                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                    <div>
+                                                        <div style="font-weight: bold; color: #333;">📐 國二數學乙班</div>
+                                                        <div style="font-size: 0.9rem; color: #666;">A102教室 | 20位學生</div>
+                                                    </div>
+                                                    <div style="text-align: right;">
+                                                        <div style="font-weight: bold; color: #28a745;">15:40-17:10</div>
+                                                        <span class="badge badge-info">待開始</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div style="padding: 15px; border-left: 4px solid #6c757d; background: #f8f9fa; border-radius: 8px;">
+                                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                    <div>
+                                                        <div style="font-weight: bold; color: #333;">📐 國三數學衝刺班</div>
+                                                        <div style="font-size: 0.9rem; color: #666;">A101教室 | 30位學生</div>
+                                                    </div>
+                                                    <div style="text-align: right;">
+                                                        <div style="font-weight: bold; color: #6c757d;">18:30-20:00</div>
+                                                        <span class="badge badge-warning">準備中</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-section">
+                                        <div class="info-title">🔔 最新通知</div>
+                                        <div>
+                                            <div style="padding: 12px; background: #fff3cd; border-radius: 8px; margin-bottom: 10px;">
+                                                <div style="font-weight: bold; color: #856404;">⚠️ 系統提醒</div>
+                                                <div style="font-size: 0.9rem; color: #666;">第一次段考成績輸入截止：明天 17:00</div>
+                                                <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">還有 8 份成績待輸入</div>
+                                            </div>
+                                            
+                                            <div style="padding: 12px; background: #f8d7da; border-radius: 8px; margin-bottom: 10px;">
+                                                <div style="font-weight: bold; color: #721c24;">🚨 出席警示</div>
+                                                <div style="font-size: 0.9rem; color: #666;">林小偉連續曠課 3 次，需要關懷</div>
+                                                <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">建議聯絡家長</div>
+                                            </div>
+
+                                            <div style="padding: 12px; background: #d1ecf1; border-radius: 8px;">
+                                                <div style="font-weight: bold; color: #0c5460;">ℹ️ 課程通知</div>
+                                                <div style="font-size: 0.9rem; color: #666;">明日因颱風停課，補課時間另行通知</div>
+                                                <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">影響 5 堂課程</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-header">📈 本月營運概況</div>
+                                    <div class="card-body">
+                                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                                            <div>
+                                                <h4 style="color: #333; margin-bottom: 15px;">👥 學生狀況</h4>
+                                                <div class="chart-placeholder" style="height: 200px;">
+                                                    📊 學生數量變化圖
+                                                    <br><small>新增 vs 流失 vs 在學</small>
+                                                </div>
+                                            </div>
+                                            
+                                            <div>
+                                                <h4 style="color: #333; margin-bottom: 15px;">💰 收入分析</h4>
+                                                <div class="chart-placeholder" style="height: 200px;">
+                                                    💹 月收入趨勢圖
+                                                    <br><small>學費 vs 教材費 vs 活動費</small>
+                                                </div>
+                                            </div>
+                                            
+                                            <div>
+                                                <h4 style="color: #333; margin-bottom: 15px;">📚 課程熱度</h4>
+                                                <div class="chart-placeholder" style="height: 200px;">
+                                                    🔥 課程受歡迎程度
+                                                    <br><small>報名人數 vs 滿班率</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="detail-panel">
+                                    <div class="info-section">
+                                        <div class="info-title">⚡ 快速操作</div>
+                                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                                            <button class="btn btn-primary" style="padding: 15px; justify-content: center;">
+                                                ✅ 今日點名
+                                            </button>
+                                            <button class="btn btn-success" style="padding: 15px; justify-content: center;">
+                                                📝 輸入成績
+                                            </button>
+                                            <button class="btn btn-warning" style="padding: 15px; justify-content: center;">
+                                                📤 發送通知
+                                            </button>
+                                            <button class="btn btn-info" style="padding: 15px; justify-content: center;">
+                                                💰 收費記錄
+                                            </button>
+                                            <button class="btn btn-secondary" style="padding: 15px; justify-content: center;">
+                                                📊 查看報表
+                                            </button>
+                                            <button class="btn btn-success" style="padding: 15px; justify-content: center;">
+                                                👥 新增學生
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-section">
+                                        <div class="info-title">📋 待辦事項</div>
+                                        <div>
+                                            <div style="display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #f0f0f0;">
+                                                <input type="checkbox" style="margin-right: 10px;">
+                                                <div style="flex: 1;">
+                                                    <div style="font-weight: 500;">批改國二甲班數學作業</div>
+                                                    <div style="font-size: 0.9rem; color: #666;">截止：今天 18:00</div>
+                                                </div>
+                                                <span class="badge badge-danger">高</span>
+                                            </div>
+                                            
+                                            <div style="display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #f0f0f0;">
+                                                <input type="checkbox" style="margin-right: 10px;">
+                                                <div style="flex: 1;">
+                                                    <div style="font-weight: 500;">準備明天課程教材</div>
+                                                    <div style="font-size: 0.9rem; color: #666;">截止：明天 08:00</div>
+                                                </div>
+                                                <span class="badge badge-warning">中</span>
+                                            </div>
+                                            
+                                            <div style="display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #f0f0f0;">
+                                                <input type="checkbox" style="margin-right: 10px;">
+                                                <div style="flex: 1;">
+                                                    <div style="font-weight: 500;">聯絡林小偉家長</div>
+                                                    <div style="font-size: 0.9rem; color: #666;">關於出席狀況</div>
+                                                </div>
+                                                <span class="badge badge-danger">高</span>
+                                            </div>
+                                            
+                                            <div style="display: flex; align-items: center; padding: 10px;">
+                                                <input type="checkbox" checked style="margin-right: 10px;">
+                                                <div style="flex: 1; opacity: 0.6;">
+                                                    <div style="font-weight: 500; text-decoration: line-through;">更新課程進度表</div>
+                                                    <div style="font-size: 0.9rem; color: #666;">已完成</div>
+                                                </div>
+                                                <span class="badge badge-success">完成</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showFunction(functionName) {
+            // 隱藏所有功能視圖
+            const views = document.querySelectorAll('.function-view');
+            views.forEach(view => {
+                view.classList.remove('active');
+            });
+
+            // 移除所有按鈕的active狀態
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // 顯示選中的功能視圖
+            document.getElementById(functionName).classList.add('active');
+
+            // 添加選中按鈕的active狀態
+            event.target.classList.add('active');
+        }
+
+        // 載入動畫
+        window.addEventListener('load', function() {
+            const mockups = document.querySelectorAll('.mockup-container');
+            mockups.forEach((mockup, index) => {
+                setTimeout(() => {
+                    mockup.style.opacity = '0';
+                    mockup.style.transform = 'translateY(30px)';
+                    mockup.style.transition = 'all 0.6s ease';
+                    setTimeout(() => {
+                        mockup.style.opacity = '1';
+                        mockup.style.transform = 'translateY(0)';
+                    }, 50);
+                }, index * 200);
+            });
+        });
+
+        // 模擬互動效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 表格行點擊效果
+            const tableRows = document.querySelectorAll('.table tbody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('click', function() {
+                    // 移除其他行的選中狀態
+                    tableRows.forEach(r => r.style.background = '');
+                    // 設定當前行為選中狀態
+                    this.style.background = '#e3f2fd';
+                });
+            });
+
+            // 按鈕懸停效果
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '';
+                });
+            });
+
+            // 卡片懸停效果
+            const cards = document.querySelectorAll('.card, .stat-card, .info-section');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px)';
+                    this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '';
+                });
+            });
+
+            // 模擬即時數據更新
+            setInterval(function() {
+                const statNumbers = document.querySelectorAll('.stat-number');
+                statNumbers.forEach(stat => {
+                    if (Math.random() > 0.95) { // 5% 機率更新
+                        const currentValue = parseInt(stat.textContent);
+                        if (!isNaN(currentValue)) {
+                            const change = Math.floor(Math.random() * 3) - 1; // -1, 0, 1
+                            const newValue = Math.max(0, currentValue + change);
+                            stat.textContent = newValue;
+                            
+                            // 添加更新動畫
+                            stat.style.color = '#28a745';
+                            setTimeout(() => {
+                                stat.style.color = '';
+                            }, 1000);
+                        }
+                    }
+                });
+            }, 5000); // 每5秒檢查一次
+
+            // 模擬進度條動畫
+            const progressBars = document.querySelectorAll('.progress-bar');
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = width;
+                    bar.style.transition = 'width 1.5s ease-in-out';
+                }, 500);
+            });
+        });
+
+        // 鍵盤快捷鍵
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case '1':
+                        e.preventDefault();
+                        showFunction('student');
+                        break;
+                    case '2':
+                        e.preventDefault();
+                        showFunction('grade');
+                        break;
+                    case '3':
+                        e.preventDefault();
+                        showFunction('attendance');
+                        break;
+                    case '4':
+                        e.preventDefault();
+                        showFunction('finance');
+                        break;
+                    case '5':
+                        e.preventDefault();
+                        showFunction('course');
+                        break;
+                    case '6':
+                        e.preventDefault();
+                        showFunction('notice');
+                        break;
+                    case '0':
+                        e.preventDefault();
+                        showFunction('dashboard');
+                        break;
+                }
+            }
+        });
+
+        // 印出鍵盤快捷鍵提示
+        console.log('🎹 鍵盤快捷鍵:');
+        console.log('Ctrl/Cmd + 1: 學生管理');
+        console.log('Ctrl/Cmd + 2: 成績管理');
+        console.log('Ctrl/Cmd + 3: 出缺勤管理');
+        console.log('Ctrl/Cmd + 4: 費用管理');
+        console.log('Ctrl/Cmd + 5: 課程管理');
+        console.log('Ctrl/Cmd + 6: 通知公告');
+        console.log('Ctrl/Cmd + 0: 儀表板');
+    </script>
+</body>
+</html>
