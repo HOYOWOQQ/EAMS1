@@ -85,6 +85,7 @@ SCAP（Smart Campus Affairs Platform）是一套整合校務管理的智慧平�
 
 ---
 
+
 ## 📑 專題簡報
-[![簡報封面](docs/cover.png)](https://github.com/HOYOWOQQQ/EAMS1/raw/main/SCAP.pdf)
+[![簡報封面](docs/cover.png)](https://github.com/HOYOWOQQ/EAMS1/blob/main/SCAP.pdf)
 
