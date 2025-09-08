@@ -65,10 +65,7 @@ SCAP（Smart Campus Affairs Platform）是一套整合校務管理的智慧平�
 - SQL Server 2019+
 - Node.js 18+
 
-### 啟動後端
-```bash
-cd backend
-mvn spring-boot:run
+
 
 ---
 ###👥 專案成員
