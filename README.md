@@ -69,3 +69,25 @@ SCAP（Smart Campus Affairs Platform）是一套整合校務管理的智慧平�
 ```bash
 cd backend
 mvn spring-boot:run
+
+
+###👥 專案成員
+
+巫志原 – 會員管理模組 ｜ ✉️ wcy.alan.tw@gmail.com
+
+張碩淮 – 課程管理模組 & 系統管理 ｜ ✉️ stanshy666@gmail.com
+
+黃俐媛 – 費用管理模組 ｜ ✉️ xjeo795@gmail.com
+
+李巧吟 – 出缺勤系統 ｜ ✉️ liyun960722@gmail.com
+
+呂哲威 – 成績管理模組 ｜ ✉️ qqbook03@gmail.com
+
+賴政睿 – 通知與聊天室 ｜ ✉️ z047831@gmail.com
+
+
+---
+
+## 📑 專題簡報
+[![查看 PDF](https://img.shields.io/badge/簡報-PDF-blue?style=for-the-badge&logo=adobeacrobatreader)](https://github.com/HOYOWOQQQ/EAMS1/raw/main/Blue%20Yellow%20Modern%20Geometric%20Business%20Proposal%20Presentation.pdf)
+
