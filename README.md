@@ -6,7 +6,7 @@
 
 ## 📖 專題介紹
 SCAP（Smart Campus Affairs Platform）是一套整合校務管理的智慧平台，旨在解決傳統校務系統資訊分散、管理效率低落的問題。我們透過模組化設計，讓教師、行政人員、家長及學生能共用一個平台，提升行政效能並推動教育數位轉型。
-
+前端頁面(須配合使用)[EAMS1 前端VUE專案]https://github.com/HOYOWOQQ/EAMS-VUE
 ---
 
 ## 🔎 背景問題
