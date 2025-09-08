@@ -70,7 +70,7 @@ SCAP（Smart Campus Affairs Platform）是一套整合校務管理的智慧平�
 cd backend
 mvn spring-boot:run
 
-
+---
 ###👥 專案成員
 
 巫志原 – 會員管理模組 ｜ ✉️ wcy.alan.tw@gmail.com
