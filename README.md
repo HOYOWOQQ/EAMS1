@@ -85,5 +85,5 @@ mvn spring-boot:run
 
 賴政葦 – 通知與聊天室 z047831@gmail.com
 
-👉查看專題簡報（Canva 連結）
-https://www.canva.com/design/DAGxQSv9BKg/hSYw9-8bql3xcGyS231zIA/edit?ui=eyJEIjp7IlAiOnsiQiI6ZmFsc2V9fX0
+## 📑 專題簡報
+[![查看 PDF](https://img.shields.io/badge/簡報-PDF-blue?style=for-the-badge&logo=adobeacrobatreader)](https://github.com/HOYOWOQQQ/EAMS1/raw/main/Blue%20Yellow%20Modern%20Geometric%20Business%20Proposal%20Presentation.pdf)
